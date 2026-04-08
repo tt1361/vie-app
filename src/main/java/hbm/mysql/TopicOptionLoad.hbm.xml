@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.topic">
+    <class name="TopicOptionLoad" table="TOPIC_OPTION_LOAD">
+        <id name="loadId" type="int">
+            <column name="load_id">
+                <comment>id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="loadName" type="string">
+            <column name="load_name">
+                <comment>操作路径名称</comment>
+            </column>
+        </property>
+        <property name="loadIndex" type="string">
+            <column name="load_index">
+                <comment>操作路径名称</comment>
+            </column>
+        </property>
+        <property name="dataAuth" type="text">
+            <column name="data_auth"></column>
+        </property>
+        <many-to-one name="path" lazy="false"
+                     cascade="save-update,persist">
+            <column name="path_id">
+                <comment>路径</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="togather" lazy="false"
+                     cascade="save-update,persist">
+            <column name="togather_id">
+                <comment>路径</comment>
+            </column>
+        </many-to-one>
+    </class>
+
+</hibernate-mapping>

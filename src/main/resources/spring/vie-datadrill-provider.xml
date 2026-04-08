@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+     
+	<dubbo:service interface="com.iflytek.vie.app.api.datadrill.DataDrillService"
+		ref="dataDrillService" version="1.0" timeout="30000" retries="2" delay="-1" />
+
+    <dubbo:service interface="com.iflytek.vie.app.api.datadrill.FilterAnaylseService"
+                   ref="filterAnaylseService" version="1.0" timeout="30000" retries="2" delay="-1" />
+
+	<bean id="dataDrillService" class="com.iflytek.vie.app.provider.impl.datadrill.DataDrillServiceImpl">
+        <property name="excuteContext" ref="excuteContext" />
+        <property name="dimensionService" ref="dimensionService"/>
+        <property name="dataSourceInfo" ref="dataSourceInfo"/>
+        <property name="dataAuthService" ref="dataAuthService"/>
+        <property name="modelService" ref="modelService"/>
+	</bean>
+
+    <bean id="filterAnaylseService" class="com.iflytek.vie.app.provider.impl.datadrill.FilterAnaylseServiceImpl">
+        <property name="modelDB" ref="modelDBPlatform"/>
+        <property name="filterDB" ref="filterInfoDB"/>
+    </bean>
+</beans>

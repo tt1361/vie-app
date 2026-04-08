@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.custom">
+    <class name="CustomHomePage"
+           table="CUSTOM_HOMEPAGE">
+
+        <id name="id" type="java.lang.Long">
+            <column name="ID">
+                <comment>ID</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+
+        <property name="pageName" type="java.lang.String">
+            <column name="page_name"></column>
+        </property>
+        <property name="createTime" type="java.util.Date">
+            <column name="create_time"></column>
+        </property>
+        <property name="createUser" type="java.lang.String">
+            <column name="create_user" ></column>
+        </property>
+        <property name="sortOrder" type="java.lang.Integer">
+            <column name="sort_order"></column>
+        </property>
+        <property name="dataSource" type="java.lang.String">
+            <column name="dataSource"></column>
+        </property>
+    </class>
+
+</hibernate-mapping>

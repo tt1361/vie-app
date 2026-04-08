@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.report">
+    <class name="ReportTask" table="report_task">
+        <id name="downloadID" type="int">
+            <column name="id">
+            </column>
+        </id>
+        <property name="downloadCondition" type="text">
+            <column name="reportTemplate" length="1000">
+            </column>
+        </property>
+        <property name="status" type="int">
+            <column name="status" default="0">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.api.datahandle">
+    <class name="com.iflytek.vie.app.api.datahandle.TaskfileHandleInfo" table="TASKFILE_HANDLE_INFO">
+        <id name="id" type="java.lang.Long">
+            <column name="ID">
+            	<comment>id</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">
+                    TASKFILE_HANDLE_INFO_SEQ
+                </param>
+            </generator>
+        </id>
+        <property name="handleTime" type="java.util.Date">
+            <column name="HANDLE_TIME">
+            </column>
+        </property>
+        <property name="allTotalNum" type="java.lang.Long">
+            <column name="ALL_TOTAL_NUM">
+            </column>
+        </property>
+        <property name="totalNum" type="java.lang.Integer">
+            <column name="TOTAL_NUM">
+            </column>
+        </property>
+        <property name="successNum" type="java.lang.Integer">
+            <column name="SUCCESS_NUM">
+            </column>
+        </property>
+        <property name="totalFailNum" type="java.lang.Integer">
+            <column name="TOTAL_FAIL_NUM">
+            </column>
+        </property>
+        <property name="dataSource" type="string">
+            <column name="dataSource">
+            </column>
+        </property>
+        
+    </class>
+
+</hibernate-mapping>

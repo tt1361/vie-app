@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="com.iflytek.vie.app.pojo.model.TaskInfo" table="task_info_t">
+		<id name="taskId" type="long">
+			<column name="task_id" not-null="true"/>
+			<generator class="native"></generator>
+		</id>
+		<property name="taskName" type="string">
+			<column name="task_name"/>
+		</property>
+		<property name="taskComment" type="string">
+			<column name="task_comment"/>
+		</property>
+		<property name="taskType" type="long">
+			<column name="task_type"/>
+		</property>
+		<property name="taskStatus" type="long">
+			<column name="task_status"/>
+		</property>
+		<property name="dataSource" type="string">
+			<column name="data_source"/>
+		</property>
+		<property name="userId" type="long">
+			<column name="user_id"/>
+		</property>
+		<property name="userName" type="string">
+			<column name="user_name">
+				<comment>创建人</comment>
+			</column>
+		</property>
+		<property name="modifierId" type="long">
+			<column name="modifier_id"/>
+		</property>
+		<property name="createTime" type="string">
+			<column name="create_time"/>
+		</property>
+		<property name="updateTime" type="string">
+			<column name="update_time"/>
+		</property>
+		<property name="runSchema" type="long">
+			<column name="run_schema"/>
+		</property>
+		<property name="runTime" type="string">
+			<column name="run_time"/>
+		</property>
+		<property name="filterType" type="long">
+			<column name="filter_type"/>
+		</property>
+		<property name="filterContent" type="text">
+			<column name="filter_content"/>
+		</property>
+		<property name="operateContent" type="text">
+			<column name="operate_content"/>
+		</property>
+		<property name="extend1" type="string">
+			<column name="extend1"/>
+		</property>
+		<property name="extend2" type="string">
+			<column name="extend2"/>
+		</property>
+	</class>
+
+	<query name="CheckExsit">
+		FROM TaskInfo T WHERE T.taskStatus != 4 AND T.taskName = ? AND T.dataSource=?
+	</query>
+	<query name="GetTaskById">
+		FROM TaskInfo T WHERE T.taskStatus != 4 AND T.taskId = ?
+	</query>
+</hibernate-mapping>

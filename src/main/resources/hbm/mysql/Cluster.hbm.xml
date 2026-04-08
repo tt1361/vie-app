@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.provider.pojo">
+    <class name="Cluster"
+           table="TOPIC_TOGATHER_INFO">
+
+        <id name="togatherId" type="java.lang.Long">
+            <column name="TOGATHER_ID">
+                <comment>TOGATHER_ID</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+
+        <property name="togatherName" type="java.lang.String">
+            <column name="TOGATHER_NAME"></column>
+        </property>
+        <property name="parentId" type="java.lang.Long">
+            <column name="PARENT_ID"></column>
+        </property>
+        <property name="chartLeftInfo" type="text">
+            <column name="CHART_LEFT_INFO" ></column>
+        </property>
+        <property name="charRightInfo" type="text">
+            <column name="CHART_RIGHT_INFO">
+            </column>
+        </property>
+        <property name="pathId" type="java.lang.Long">
+            <column name="PATH_ID">
+            </column>
+        </property>
+        <property name="telephoneIdInfo" type="text">
+            <column name="TELEPHONE_ID_INFO">
+            </column>
+        </property>
+        <property name="togatherNumber" type="java.lang.String">
+            <column name="TOGATHER_NUMBER">
+            </column>
+        </property>
+        <property name="togatherCheck" type="java.lang.Long">
+            <column name="TOGATHER_CHECK_NUM">
+            </column>
+        </property>
+        <property name="togatherStatus" type="java.lang.Long">
+            <column name="STATUS">
+            </column>
+        </property>
+
+
+        <property name="dataAuth" type="text">
+            <column name="DATA_AUTH"></column>
+        </property>
+        <property name="dataType" type="java.lang.Integer">
+        	<column name="data_type"></column>
+        </property>
+        <property name="batchId" type="java.lang.String">
+        	<column name="batch_id"></column>
+        </property>
+        <property name="ifLone" type="java.lang.Integer">
+        	<column name="if_lone"></column>
+        </property>
+    </class>
+
+</hibernate-mapping>

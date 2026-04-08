@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.topicgroup">
+	<class name="PushReadCall" table="push_read_call">
+		<id name="id" type="long">
+			<column name="id" not-null="true"></column>
+			<generator class="native"></generator>
+		</id>
+		<property name="groupId" type="long">
+			<column name="group_Id" not-null="true">
+				<comment>专题组id</comment>
+			</column>
+		</property>
+		<property name="modelId" type="long">
+			<column name="model_id">
+				<comment>模型id</comment>
+			</column>
+		</property>
+		<property name="callId" type="string">
+			<column name="call_id" not-null="true">
+				<comment>通话id</comment>
+			</column>
+		</property>
+		<property name="callTime" type="date">
+			<column name="call_time">
+				<comment>通话创建时间</comment>
+			</column>
+		</property>
+		<property name="deleted" type="int">
+			<column name="deleted">
+				<comment>是否删除（0不删除，1删除）</comment>
+			</column>
+		</property>
+		<property name="remark" type="string">
+			<column name="remark">
+				<comment>备注</comment>
+			</column>
+		</property>
+	</class>
+</hibernate-mapping> 

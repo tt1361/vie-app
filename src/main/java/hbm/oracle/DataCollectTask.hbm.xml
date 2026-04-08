@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.model">
+
+    <class name="DataCollectTask" table="DATACOLLECT_TASK">
+        <id name="taskId" type="long">
+            <column name="TASKID">
+                <comment>任务id</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">
+                    data_collect_sequence
+                </param>
+            </generator>
+        </id>
+        
+        <property name="modelId" type="long">
+            <column name="MODELID">
+                <comment>模型ID</comment>
+            </column>
+        </property>
+        
+        <property name="onlineTime" type="string">
+            <column name="ONLINETIME">
+                <comment>上线时间</comment>
+            </column>
+        </property>
+
+        <property name="status" type="integer">
+            <column name="STATUS">
+                <comment>任务状态,0初始化,-1失败,1成功</comment>
+            </column>
+        </property>
+</class>
+</hibernate-mapping>

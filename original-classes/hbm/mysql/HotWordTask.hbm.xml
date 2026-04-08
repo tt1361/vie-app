@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.topic">
+    <class name="com.iflytek.vie.app.pojo.topic.HotWordTask"
+           table="HOTWORD_TASK">
+
+        <id name="taskId" type="java.lang.Long">
+            <column name="task_id">
+                <comment>任务id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+
+        <property name="pathId" type="java.lang.Long">
+            <column name="path_id"></column>
+        </property>
+        <property name="status" type="java.lang.Integer">
+            <column name="status"></column>
+        </property>
+        <property name="updateTime" type="java.lang.String">
+            <column name="update_time" ></column>
+        </property>
+        <property name="pathContent" type="java.lang.String">
+            <column name="path_content" ></column>
+        </property>
+        <property name="topicTime" type="java.lang.String">
+            <column name="topic_time" ></column>
+        </property>
+        <property name="dataAuth" type="java.lang.String">
+            <column name="data_auth"></column>
+        </property>
+        <property name="dataType" type="java.lang.Integer">
+            <column name="data_type"></column>
+        </property>
+        <property name="batchId" type="java.lang.String">
+            <column name="batch_id"></column>
+        </property>
+        <property name="ifLone" type="java.lang.Integer">
+            <column name="if_lone"></column>
+        </property>
+    </class>
+
+</hibernate-mapping>

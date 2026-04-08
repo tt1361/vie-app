@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.serial">
+    <class name="SerialTask" table="serial_task">
+        <id name="batchId" type="string">
+            <column name="batch_id">
+            </column>
+        </id>
+        <property name="status" type="int">
+            <column name="status">
+            </column>
+        </property>
+        <property name="total" type="int">
+            <column name="total">
+            </column>
+        </property>
+        <property name="successTotal" type="int">
+            <column name="success_total">
+            </column>
+        </property>
+        <property name="updateTime" type="java.sql.Timestamp">
+            <column name="update_time">
+            </column>
+        </property>
+        <property name="createTime" type="java.sql.Timestamp">
+            <column name="create_time">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

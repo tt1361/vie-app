@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<bean name="dimensionDBPlatform" class="com.iflytek.vie.app.provider.database.DimensionDBPlatform">
+		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+	</bean>
+	<bean name="dimensionService" class="com.iflytek.vie.app.provider.impl.dimension.DimensionServiceImpl">
+		<property name="dimensionDb" ref="dimensionDBPlatform"/>
+        <property name="excuteContext" ref="excuteContext"/>
+        <property name="dataSourceInfo" ref="dataSourceInfo"/>
+        <property name="commonData" ref="commonDataPlatform"/>
+        <property name="userService" ref="userService"/>
+        <property name="groupService" ref="groupAuthService"/>
+        <property name="modelGroupDB" ref="modelGroupDBPlatform"/>
+        <property name="modelDB" ref="modelDBPlatform"/>
+
+	</bean>
+	
+	
+	<bean id="testService" class="com.iflytek.vie.app.provider.impl.dimension.TestServiceImpl">
+		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
+	</bean>
+	
+	<dubbo:service interface="com.iflytek.vie.app.pojo.dimension.TestService"
+                   ref="testService" version="1.0" timeout="3000" retries="0" delay="-1"/>
+	
+	                   
+     <dubbo:service interface="com.iflytek.vie.app.api.dimension.DimensionService"
+                   ref="dimensionService" version="1.0" timeout="3000" retries="0" delay="-1"/>
+</beans>

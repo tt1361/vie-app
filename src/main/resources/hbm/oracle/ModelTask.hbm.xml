@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.iflytek.vie.app.pojo.model.ModelTask" table="MODEL_TASK_T" >
+        <composite-id>
+            <key-property name="modelId" type="long">
+                <column name="MODEL_ID" length="10" />
+            </key-property>
+            <key-property name="taskId" type="long">
+                <column name="TASK_ID" length="10" />
+            </key-property>
+        </composite-id>
+    </class>
+</hibernate-mapping>

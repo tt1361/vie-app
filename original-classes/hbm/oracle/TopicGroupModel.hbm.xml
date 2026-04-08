@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.topicgroup">
+	<class name="TopicGroupModel" table="topic_group_model">
+		<composite-id>
+			<key-property name="topicGroupId" type="long">
+				<column name="topic_group_id" not-null="true" length="19"></column>
+			</key-property>
+			<key-property name="modelId" type="long">
+				<column name="model_id" not-null="true" length="19"></column>
+			</key-property>
+		</composite-id>
+	</class>
+</hibernate-mapping>

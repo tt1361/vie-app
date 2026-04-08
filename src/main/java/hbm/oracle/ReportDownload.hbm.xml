@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.report">
+    <class name="com.iflytek.vie.app.pojo.report.ReportDownload" table="report_download">
+        <id name="id" type="int">
+            <column name="id">
+                <comment>id</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">
+                    reportdownload_sequence
+                </param>
+            </generator>
+        </id>
+        <property name="downloadName"  type="string">
+            <column name="downloadName" length="64">
+            </column>
+        </property>
+        <property name="fileDir" type="string">
+            <column name="fileDir" length="500">
+            </column>
+        </property>
+        <property name="tureFileDir" type="string">
+            <column name="tureFileDir" length="500">
+            </column>
+        </property>
+        <property name="createUser" type="string">
+            <column name="createUser" length="64">
+            </column>
+        </property>
+        <property name="downloadDate" type="java.sql.Timestamp">
+            <column name="downloadDate">
+            </column>
+        </property>
+        <property name="progressRate" type="int">
+            <column name="progressRate">
+            </column>
+        </property>
+        <property name="remark" type="string">
+            <column name="remark" length="2000">
+            </column>
+        </property>
+        <property name="dataSource" type="string">
+            <column name="dataSource" length="255">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

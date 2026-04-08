@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+  
+	<bean name="fetchHotWordService" class="com.iflytek.vie.app.provider.impl.dimension.FetchHotWordServiceImpl">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+   <dubbo:service interface="com.iflytek.vie.app.api.dimension.FetchHotWordService"
+                   ref="fetchHotWordService" version="1.0" timeout="3000" retries="0" delay="-1"/>
+
+</beans>

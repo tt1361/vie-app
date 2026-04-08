@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.model">
+    <class name="DataMarkInfo" table="DATA_MARK_INFO" >
+        <id name="id" type="long">
+            <column name="id">
+                <comment>主键Id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="mark" type="int" length="1">
+            <column name="mark">
+                <comment>标记,-1 N,0 空,1 Y</comment>
+            </column>
+        </property>
+        <property name="telId" type="string">
+            <column name="tel_id">
+                <comment>每一条录音的ID</comment>
+            </column>
+        </property>
+        <property name="fragmentId" type="long">
+            <column name="fragment_id">
+                <comment>片段ID</comment>
+            </column>
+        </property>
+
+    </class>
+    <query name="queryAllDataMarks">
+        FROM DataMarkInfo t WHERE t.fragmentId=? AND t.mark!=0
+    </query>
+    <query name="queryDataMarkById">
+        FROM DataMarkInfo t WHERE t.id=?
+    </query>
+    <query name="queryDataMarkByTelId">
+        FROM DataMarkInfo t WHERE t.fragmentId=? AND t.telId=?
+    </query>
+</hibernate-mapping>

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.topic">
+    <class name="TopicTogatherInfo" table="TOPIC_TOGATHER_INFO">
+        <id name="togatherId" type="long">
+            <column name="togather_id">
+                <comment>id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="togatherName" type="string">
+            <column name="togather_name">
+                <comment>聚类名称</comment>
+            </column>
+        </property>
+        <property name="togatherNumber" type="string">
+            <column name="togather_number">
+                <comment>聚类序号</comment>
+            </column>
+        </property>
+        <property name="parentId" type="long">
+            <column name="parent_id">
+                <comment>父类ID</comment>
+            </column>
+        </property>
+        <property name="dataAuth" type="text">
+            <column name="data_auth"></column>
+        </property>
+        <property name="chartLeftInfo" type="text">
+            <column name="chart_left_info">
+                <comment>饼图信息</comment>
+            </column>
+        </property>
+        <property name="chartRightInfo" type="text">
+            <column name="chart_right_info">
+                <comment>聚类信息</comment>
+            </column>
+        </property>
+        <property name="telephonIdInfo" type="text">
+            <column name="telephone_id_info">
+                <comment>流水号集合</comment>
+            </column>
+        </property>
+        <property name="togatherCheckNum" type="int">
+            <column name="togather_check_num" default="0">
+                <comment>聚类命中数</comment>
+            </column>
+        </property>
+        <property name="status" type="int">
+            <column name="status" default="0">
+                <comment>聚类状态</comment>
+            </column>
+        </property>
+        <property name="dataType" type="java.lang.Integer">
+        	<column name="data_type"></column>
+        </property>
+        <property name="batchId" type="java.lang.String">
+        	<column name="batch_id"></column>
+        </property>
+        <property name="ifLone" type="java.lang.Integer">
+        	<column name="if_lone"></column>
+        </property>
+        <many-to-one name="path" lazy="false"
+                     cascade="save-update,persist">
+            <column name="path_id">
+                <comment>路径id</comment>
+            </column>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

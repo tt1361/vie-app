@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.report">
+    <class name="ReportConfig" table="report_config">
+        <id name="id" type="int">
+            <column name="id">
+            </column>
+            <generator class="sequence">
+                <param name="sequence">reportconfig_seq</param>
+            </generator>
+        </id>
+        <property name="name" index="rp_name" type="string">
+            <column name="name" length="64">
+            </column>
+        </property>
+        <property name="reportTemplate" type="text">
+            <column name="reportTemplate" length="1000">
+            </column>
+        </property>
+        <property name="isGeneral" type="int">
+            <column name="isGeneral">
+            </column>
+        </property>
+        <property name="isShare" type="int">
+            <column name="isShare">
+            </column>
+        </property>
+        <property name="updateUser" type="string">
+            <column name="updateUser" length="64">
+            </column>
+        </property>
+        <property name="createTime" type="java.sql.Timestamp">
+            <column name="createTime">
+            </column>
+        </property>
+        <property name="createUser" type="string">
+            <column name="createUser" length="64">
+            </column>
+        </property>
+        <property name="updateTime" type="java.sql.Timestamp">
+            <column name="updateTime">
+            </column>
+        </property>
+        <property name="status" type="int">
+            <column name="status">
+            </column>
+        </property>
+        <property name="remark" type="string">
+            <column name="remark" length="2000">
+            </column>
+        </property>
+        <property name="isUp" type="int">
+            <column name="is_up" not-null="true" default="0">
+                <comment>是否置顶，1置顶，0没指定</comment>
+            </column>
+        </property>
+        <set name="reportGroup" table="report_relation" lazy="true">
+            <key>
+                <column name="reportID">
+                </column>
+            </key>
+            <many-to-many class="ReportGroup">
+                <column name="reportGroupID">
+                </column>
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

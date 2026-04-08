@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.batch">
+    <class name="BatchDimension" table="batch_dimension">
+        <id name="id" type="int">
+            <column name="id">
+            </column>
+            <generator class="sequence">
+                <param name="sequence">batch_dimension_seq</param>
+            </generator>
+        </id>
+        <property name="dimensionName" type="string">
+            <column name="dimension_name" length="20">
+            </column>
+        </property>
+        <property name="dimensionEnglishName" type="string">
+            <column name="dimension_english_name" length="50">
+            </column>
+        </property>
+        <property name="dataSource" type="string">
+            <column name="data_source" length="50">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

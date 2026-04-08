@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+	<bean name="modelInfoDB" class="com.iflytek.vie.app.provider.database.ModelInfoDBPlatform">
+		<property name="hiberTemp" ref="hibernateTemplate"/>
+		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+	</bean>
+
+	<bean id="playerService" class="com.iflytek.vie.app.provider.impl.player.PlayerServiceImpl">
+		<property name="modelInfoDB" ref="modelInfoDB"></property>
+		<property name="blank_font_size" value="10"></property>
+		<property name="groupService" ref="groupAuthService"></property>
+		<property name="excuteContext" ref="excuteContext"></property>
+		<property name="dataSourceInfo" ref="dataSourceInfo"/>
+	</bean>
+	
+	
+<dubbo:service interface="com.iflytek.vie.app.api.player.PlayerService"
+                   ref="playerService" version="1.0" timeout="5000" retries="0" delay="-1"/>
+
+</beans>

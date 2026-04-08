@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.0.xsd ">
+
+	<bean id="reportGroupService" class="com.iflytek.vie.app.provider.impl.report.ReportGroupServiceImpl">
+		<property name="groupAuthService" ref="groupAuthService"/>
+		<property name="reportGroupDB" ref="reportGroupDB"/>
+		<property name="userService" ref="userService"/>
+	</bean>
+	
+	<bean id="reportDownloadService" class="com.iflytek.vie.app.provider.impl.report.ReportDownloadServiceImpl">
+		<property name="reportDownloadDB" ref="reportDownloadDB"/>
+		<property name="modelDB" ref="modelDB"/>
+		<property name="modelApplyService" ref="ModelApply"/>
+		<property name="dimensionService" ref="dimensionService"/>
+		<property name="commonData" ref="commonData"/>
+		<property name="dataSourceInfo" ref="dataSourceInfo"/>
+		<property name="notifyTaskService" ref="notifyTaskService"/>
+	</bean>
+	
+	<bean id="reportService" class="com.iflytek.vie.app.provider.impl.report.ReportServiceImpl">
+		<property name="reportGroupService" ref="reportGroupService"/>
+		<property name="reportGroupDB" ref="reportGroupDB"/>
+		<property name="reportConfigDB" ref="reportConfigDB"/>
+		<property name="commonReportDB" ref="commonReportDB"/>
+		<property name="commonData" ref="commonData"/>
+	</bean>
+	
+	<bean id="reportChartViewService" class="com.iflytek.vie.app.provider.impl.report.ReportChartViewServiceImpl">
+		<property name="modelApplyService" ref="ModelApply"/>
+		<property name="dataDrillService" ref="dataDrillService"/>
+		<property name="dimensionService" ref="dimensionService"/>
+		<property name="topicDB" ref="topicDB"/>
+		<property name="dataSourceInfo" ref="dataSourceInfo"/>
+		<property name="commonData" ref="commonData"/>
+		<property name="sparkUtils" ref="sparkUtils"/>
+		<property name="reportService" ref="reportService"/>
+		<!-- 饼图最大个数 -->
+		<property name="pieMaxCount" value="10"/>
+		<!-- 柱折图最大个数 -->
+		<property name="chartXMaxCount" value="30"></property>
+		
+		<!-- #默认时长区间，用于统计报表查询时选择了时长维度但是没有添加筛选条件时，使用以下默认区间 -->
+		<property name="durationMap">
+			<map>
+                <entry key="duration" value="0|30,30|60,60|90,90|120,120|150,150"></entry>
+				<entry key="vadDuration" value="0|30,30|60,60|90,90|120,120|150,150"></entry>
+				<entry key="inVadDuration" value="0|5,5|10,10|15,15|20,20|25,25|30,30"></entry>
+				<entry key="silenceLong" value="0|5,5|10,10|15,15|20,20|25,25|30,30"></entry>
+				<entry key="customDuration" value="0|30,30|60,60|90,90|120,120|150,150"></entry>
+				<entry key="seatDuration" value="0|30,30|60,60|90,90|120,120|150,150"></entry>
+				<!--平均语速默认区间值-->
+				<entry key="n0avgSpeed" value="0|2,2|4,4|6,6|8,8|10,10"></entry>
+				<entry key="n1avgSpeed" value="0|2,2|4,4|6,6|8,8|10,10"></entry>
+
+            </map>
+         </property>
+	</bean>
+	
+</beans>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.batch">
+    <class name="BatchModelTask" table="BATCH_MODEL_TASK">
+        <id name="id" type="long">
+            <column name="ID">
+                <comment>主键</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">batch_model_task_seq</param>
+            </generator>
+        </id>
+
+        <property name="batchId" type="long">
+            <column name="BATCH_ID">
+                <comment>批次主键</comment>
+            </column>
+        </property>
+
+        <property name="models" type="string">
+            <column name="MODELS">
+                <comment>模型ID，多个用逗号(,)分隔</comment>
+            </column>
+        </property>
+
+        <property name="taskStatus" type="integer">
+            <column name="TASK_STATUS">
+                <comment>任务状态,0：未开始；1：处理完成;</comment>
+            </column>
+        </property>
+    </class>
+    <query name="queryBatchModelTask">
+        SELECT new BatchModelTask(bmt.id, bmt.batchId, bmt.models, bmt.taskStatus) FROM BatchModelTask bmt WHERE
+        bmt.taskStatus=0
+    </query>
+    <query name="updateBatchTaskStatus">
+        UPDATE BatchModelTask T SET T.taskStatus=:tts WHERE T.id=:tid
+    </query>
+</hibernate-mapping>

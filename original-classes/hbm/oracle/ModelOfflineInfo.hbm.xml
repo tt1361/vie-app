@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.model">
+       <class name="com.iflytek.vie.app.pojo.model.ModelOfflineInfo" table="MODEL_OFFLINE_INFO">
+              <id name="Task_id" type="long">
+                     <column name="TASK_ID">
+                            <comment>主键id</comment>
+                     </column>
+                     <generator class="sequence">
+                            <param name="sequence">
+                                   MODEL_OFFLINE_INFO_SEQUENCE
+                            </param>
+                     </generator>
+              </id>
+              <property name="Model_id" type="long">
+                     <column name="MODEL_ID">
+                            <comment>模型id</comment>
+                     </column>
+              </property>
+              <property name="Model_status" type="int">
+                     <column name="MODEL_STATUS">
+                            <comment>模型状态</comment>
+                     </column>
+              </property>
+              <property name="DataSource" type="string">
+                     <column name="DATASOURCE">
+                            <comment>数据源</comment>
+                     </column>
+              </property>
+              <property name="user_id" type="long">
+                     <column name="USER_ID">
+                            <comment>用户id</comment>
+                     </column>
+              </property>
+              <property name="create_time" type="string">
+                     <column name="CREATE_TIME">
+                            <comment>触发时间</comment>
+                     </column>
+              </property>
+
+       </class>
+</hibernate-mapping>  

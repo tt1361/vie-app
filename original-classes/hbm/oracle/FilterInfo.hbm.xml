@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.filter">
+    <class name="FilterInfo" table="FILTER_INFO" >
+        <id name="filterId" type="long">
+            <column name="FILTER_ID">
+                <comment>id</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">
+                    FILTER_INFO_SEQ
+                </param>
+            </generator>
+        </id>
+        <property name="userId" type="string">
+            <column name="USER_ID">
+                <comment>用户</comment>
+            </column>
+        </property>
+        <property name="filterName" type="string">
+            <column name="FILTER_NAME ">
+                <comment>筛选器名称</comment>
+            </column>
+        </property>
+        <property name="database" type="string">
+            <column name="DATABASE" >
+                <comment>数据源</comment>
+            </column>
+        </property>
+        <property name="filterType" type="text">
+            <column name="FILTER_TYPE">
+                <comment>类型</comment>
+            </column>
+        </property>
+        <property name="createTime" type="date">
+            <column name="CREATE_TIME">
+                <comment>创建时间</comment>
+            </column>
+        </property>
+        <property name="isTask" type="string">
+            <column name="ISTASK">
+                <comment>是否为按任务   0：否    1：是</comment>
+            </column>
+        </property>
+        <property name="flag" type="string">
+            <column name="FLAG">
+                <comment>有效标志  0：无效   1：有效</comment>
+            </column>
+        </property>
+        <property name="containModel" type="int">
+            <column name="ISMODEL" default="0">
+                <comment>是否包含模型条件</comment>
+            </column>
+        </property>
+        <property name="filterSql" type="text">
+            <column name="FILTER_SQL">
+                <comment>转化后的sql语句</comment>
+            </column>
+        </property>
+        <property name="extend3" type="string">
+            <column name="EXTEND3">
+                <comment>扩展字段3</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

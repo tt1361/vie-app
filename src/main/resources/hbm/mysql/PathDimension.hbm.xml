@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.topic">
+    <class name="PathDimension"
+           table="PATH_DIMENSION">
+        <id name="id" type="int">
+            <column name="ID">
+                <comment>id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+            <property name="pathId" type="string">
+                <column name="pathId">
+                </column>
+            </property>
+            <property name="pathDimJson" type="string">
+                <column name="pathDimJson">
+                </column>
+            </property>
+
+    </class>
+    <query name="getAllPathDimById">
+        select T from PathDimension as T where T.pathId=?
+    </query>
+    <query name="getPathDimById">
+        select T from PathDimension as T where T.id=?
+    </query>
+
+</hibernate-mapping>

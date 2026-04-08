@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.dimension">
+    <class name="DimensionConfig" table="DIMENSION_CONFIG">
+        <id name="id" type="java.lang.Long">
+            <column name="ID">
+                <comment>id</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">
+                    DIMENSION_CONFIG_SEQ
+                </param>
+            </generator>
+        </id>
+        <property name="showName" type="string">
+            <column name="SHOW_NAME">
+            </column>
+        </property>
+        <property name="indexField" type="string">
+            <column name="INDEX_FIELD">
+            </column>
+        </property>
+        <property name="dataSource" type="string">
+            <column name="DATA_SOURCE">
+            </column>
+        </property>
+        <property name="onlineType" type="java.lang.Integer">
+            <column name="ONLINE_TYPE">
+            </column>
+        </property>
+        <property name="dataType" type="string">
+            <column name="DATA_TYPE">
+            </column>
+        </property>
+        <property name="analysis" type="java.lang.Integer">
+            <column name="IS_ANALYSIS">
+            </column>
+        </property>
+
+        <property name="show" type="java.lang.Integer">
+            <column name="IS_SHOW">
+            </column>
+        </property>
+        <property name="available" type="java.lang.Integer">
+            <column name="IS_AVAILABLE">
+            </column>
+        </property>
+        <property name="showType" type="string">
+            <column name="SHOW_TYPE">
+            </column>
+        </property>
+
+        <property name="taskType" type="java.lang.Integer">
+            <column name="TASK_TYPE">
+            </column>
+        </property>
+
+        <property name="genValue" type="java.lang.Integer">
+            <column name="IS_GENVALUE">
+            </column>
+        </property>
+
+        <property name="creator" type="string">
+            <column name="CREATOR">
+            </column>
+        </property>
+
+        <property name="extend1" type="string">
+            <column name="EXTEND1">
+            </column>
+        </property>
+        <property name="extend2" type="string">
+            <column name="EXTEND2">
+            </column>
+        </property>
+
+        <property name="extend3" type="string">
+            <column name="EXTEND3">
+            </column>
+        </property>
+
+        <property name="flag" type="integer">
+            <column name="FLAG" default="0">
+            </column>
+        </property>
+
+        <property name="modifyStatus" type="integer">
+            <column name="MODIFY_STATUS" default="0">
+            </column>
+        </property>
+
+        <set name="valueList" inverse="true" cascade="all-delete-orphan" lazy="false">
+            <key column="DIMENSION_ID"></key>
+            <one-to-many class="DimensionValue"/>
+        </set>
+
+
+    </class>
+
+</hibernate-mapping>

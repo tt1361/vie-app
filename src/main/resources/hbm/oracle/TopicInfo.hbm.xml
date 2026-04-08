@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.topic">
+    <class name="TopicInfo" table="TOPIC_INFO">
+        <id name="topicId" type="int">
+            <column name="topic_id">
+                <comment>id</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">
+                    topicInfo_sequence
+                </param>
+            </generator>
+        </id>
+        <property name="topicName" type="string">
+            <column name="topic_name">
+                <comment>专题名称</comment>
+            </column>
+        </property>
+        <property name="topicCondition" type="text">
+            <column name="topic_condition">
+                <comment>专题条件</comment>
+            </column>
+        </property>
+        <property name="createTime" type="string">
+            <column name="create_time">
+                <comment>创建时间</comment>
+            </column>
+        </property>
+        <property name="updateTime" type="string">
+            <column name="update_time">
+                <comment>更新时间</comment>
+            </column>
+        </property>
+        <property name="dataSource" type="string">
+            <column name="data_source">
+                <comment>数据源</comment>
+            </column>
+        </property>
+        <property name="topicStatus" type="int">
+            <column name="topic_status">
+                <comment>专题状态</comment>
+            </column>
+        </property>
+        <property name="createUserId" type="int">
+            <column name="create_user_id" default="0">
+                <comment>创建人ID</comment>
+            </column>
+        </property>
+        <property name="createUserNme" type="string">
+            <column name="create_user_name">
+                <comment>创建人姓名</comment>
+            </column>
+        </property>
+        <property name="updateUserId" type="int">
+            <column name="update_user_id" default="0">
+                <comment>更新人ID</comment>
+            </column>
+        </property>
+        <property name="updateUserName" type="string">
+            <column name="update_user_name">
+                <comment>更新人姓名</comment>
+            </column>
+        </property>
+        <property name="extend1" type="string">
+            <column name="extend1">
+                <comment>拓展字段1</comment>
+            </column>
+        </property>
+        <property name="extend2" type="string">
+            <column name="extend2">
+                <comment>拓展字段2</comment>
+            </column>
+        </property>
+        <property name="extend3" type="string">
+            <column name="extend3">
+                <comment>拓展字段3</comment>
+            </column>
+        </property>
+        <property name="roleId" type="int">
+            <column name="role_id">
+                <comment>角色ID</comment>
+            </column>
+        </property>
+        <property name="timeType" type="int">
+            <column name="timeType" default="0">
+                <comment>时间类型,2相对时间0非相对时间</comment>
+            </column>
+        </property>
+        <many-to-one name="modelGroup" lazy="false"
+                     cascade="save-update,persist">
+            <column name="group_id">
+                <comment>模型组</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="topicSelectDimension" lazy="false"
+                     cascade="save-update,persist">
+            <column name="topicSelectDimensionID">
+                <comment>模型维度关联id</comment>
+            </column>
+        </many-to-one>
+
+    </class>
+</hibernate-mapping>

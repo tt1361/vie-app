@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.provider.pojo">
+    <class name="TopicMarkInfo" table="TOPIC_MARK_INFO">
+        <id name="id" type="int">
+            <column name="id">
+                <comment>id</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">
+                    topicMarkInfo_sequence
+                </param>
+            </generator>
+
+        </id>
+        <property name="telephoneId" type="string">
+            <column name="telephone_id">
+                <comment>流水号</comment>
+            </column>
+        </property>
+        <property name="isNormal" type="int">
+            <column name="is_normal" default="0">
+                <comment>是否是典型，1是典型，0不是典型</comment>
+            </column>
+        </property>
+        <property name="mark" type="string">
+            <column name="mark">
+                <comment>备注</comment>
+            </column>
+        </property>
+        <many-to-one name="topic" lazy="false"
+                     cascade="save-update,persist">
+            <column name="topic_id">
+                <comment>专题ID</comment>
+            </column>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

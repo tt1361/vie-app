@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.topic">
+    <class name="TopicPath" table="TOPIC_PATH">
+        <id name="pathId" type="int">
+            <column name="path_id">
+                <comment>id</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">
+                    topicpath_sequence
+                </param>
+            </generator>
+
+        </id>
+        <property name="pathName" type="string">
+            <column name="path_name">
+                <comment>路径名称</comment>
+            </column>
+        </property>
+        <property name="pathCondition" type="text">
+            <column name="path_condition">
+                <comment>路径条件</comment>
+            </column>
+        </property>
+        <property name="applicationId" type="int">
+            <column name="application_id" default="0">
+                <comment>是否是主路径</comment>
+            </column>
+        </property>
+        <property name="pathStatus" type="int">
+            <column name="path_status" default="0">
+                <comment>路径状态</comment>
+            </column>
+        </property>
+        <property name="callListDimensions" type="text">
+            <column name="callList_Dimensions">
+                <comment>通话列表维度</comment>
+            </column>
+        </property>
+        <property name="chartDimensions" type="text">
+            <column name="chart_Dimensions">
+                <comment>通话图形维度</comment>
+            </column>
+        </property>
+        <property name="xDimension" type="string">
+            <column name="x_Dimension">
+                <comment>通话x轴维度</comment>
+            </column>
+        </property>
+        <property name="yDimension" type="string">
+            <column name="y_Dimension">
+                <comment>通话y轴维度</comment>
+            </column>
+        </property>
+        <property name="togetherDimensions" type="text">
+            <column name="together_Dimensions">
+                <comment>聚类下维度</comment>
+            </column>
+        </property>
+        <many-to-one name="topic" lazy="false"
+                     cascade="save-update,persist">
+            <column name="topic_id">
+                <comment>专题ID</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="topicTogatherInfo" lazy="false"
+                     cascade="save-update,persist">
+            <column name="togather_id">
+                <comment>路径id</comment>
+            </column>
+        </many-to-one>
+    </class>
+    <query name="getPathByName">
+        from TopicPath rc where  rc.pathName =? and rc.topic.id=?
+    </query>
+</hibernate-mapping>

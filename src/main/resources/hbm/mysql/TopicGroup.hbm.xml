@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.topicgroup">
+	<class name="TopicGroup" table="topic_group">
+		<id name="groupId" type="long">
+			<column name="group_id" not-null="true" unique="true"></column>
+			<generator class="native"></generator>
+		</id>
+		<property name="groupName" type="string">
+			<column name="group_name" not-null="true">
+				<comment>专题组名称</comment>
+			</column>
+		</property>
+		<property name="groupType" type="int">
+			<column name="group_type" not-null="true">
+				<comment>专题组类型（0业务概览，1重点推送）</comment>
+			</column>
+		</property>
+		<property name="deleted" type="int">
+			<column name="deleted">
+				<comment>是否删除（0不删除，1删除）</comment>
+			</column>
+		</property>
+		<property name="createTime" type="string">
+			<column name="create_time">
+				<comment>创建时间</comment>
+			</column>
+		</property>
+		<property name="remark" type="string">
+			<column name="remark">
+				<comment>备注</comment>
+			</column>
+		</property>
+		<property name="parentGroupId" type="long">
+			<column name="parent_group_id">
+				<comment>父专题组id</comment>
+			</column>
+		</property>
+	</class>
+
+</hibernate-mapping>        

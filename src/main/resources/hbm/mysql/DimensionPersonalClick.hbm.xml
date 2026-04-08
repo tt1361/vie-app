@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.dimension">
+    <class name="DimensionPersonalClick" table="DIMENSION_PERSONAL_CLICK">
+        <id name="id" type="java.lang.Long">
+            <column name="ID">
+                <comment>id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="dimensionAnoterName" type="string">
+            <column name="dimension_another_name">
+            </column>
+        </property>
+        <property name="roleId" type="java.lang.Long">
+            <column name="role_id">
+            </column>
+        </property>
+
+    </class>
+
+</hibernate-mapping>

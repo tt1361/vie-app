@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.0.xsd ">
+
+	<bean name="topicGroupDB" class="com.iflytek.vie.app.provider.database.TopicGroupDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	
+	</bean>
+	
+	<bean name="pushReadCallDB" class="com.iflytek.vie.app.provider.database.PushReadCallDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	
+		<property name="jdbcTemplate" ref="jdbcTemplate"></property>	
+	</bean>
+	
+	<bean name="modelDB" class="com.iflytek.vie.app.provider.database.ModelDB" >
+        <property name="hiberTemp" ref="hibernateTemplate"/>
+        <property name="modelGroupDB" ref="modelGroupDB"/>
+    </bean>
+
+    <bean name="dataMarkInfoDB" class="com.iflytek.vie.app.provider.database.DataMarkInfoDB">
+        <property name="hiberTemp" ref="hibernateTemplate"></property>
+    </bean>
+    
+    <bean name="dataRemarkInfoDB" class="com.iflytek.vie.app.provider.database.DataRemarkInfoDB">
+        <property name="hiberTemp" ref="hibernateTemplate"></property>
+    </bean>
+    
+    <bean name="modelApplyDB" class="com.iflytek.vie.app.provider.database.ModelApplyDB">
+		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
+	</bean>
+	
+	<bean name="dataMarkInfoApplyDB" class="com.iflytek.vie.app.provider.database.DataMarkInfoApplyDB">
+		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
+	</bean>
+	
+	<bean name="dataRemarkApplyDB" class="com.iflytek.vie.app.provider.database.DataRemarkApplyDB">
+		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
+	</bean>
+	
+	<bean name="modelCategoryDB" class="com.iflytek.vie.app.provider.database.ModelCategoryDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	
+	</bean>
+	
+	<bean name="topicMarkDB" class="com.iflytek.vie.app.provider.database.TopicMarkDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>
+	</bean>
+	
+	<bean name="customHomePageDB" class="com.iflytek.vie.app.provider.database.CustomHomePageDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>
+	</bean>
+	
+	<bean name="reportGroupDB" class="com.iflytek.vie.app.provider.database.ReportGroupDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	
+	</bean>
+	
+	<bean name="modelGroupDB" class="com.iflytek.vie.app.provider.database.ModelGroupDB" >
+        <property name="hiberTemp" ref="hibernateTemplate"></property>
+    </bean>
+    
+    <bean name="topicDB" class="com.iflytek.vie.app.provider.database.TopicDB" >
+        <property name="hiberTemp" ref="hibernateTemplate"></property>
+    </bean>
+
+	<bean name="dimensionDB" class="com.iflytek.vie.app.provider.database.DimensionDB">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+
+   <!--  <bean name="dimensionDB" class="com.iflytek.vie.app.provider.database.DimensionDB" >
+        <property name="hiberTemp" ref="hibernateTemplate"></property>
+    </bean> -->
+    
+    <bean name="clusterDB" class="com.iflytek.vie.app.provider.database.ClusterDB" >
+        <property name="hibernateTemplate" ref="hibernateTemplate"/>
+    </bean>
+    
+    <bean name="topicPathDB" class="com.iflytek.vie.app.provider.database.TopicPathDB" >
+        <property name="hibernateTemplate" ref="hibernateTemplate"></property>
+    </bean>
+    
+	<bean name="reportDownloadDB" class="com.iflytek.vie.app.provider.database.ReportDownloadDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	
+	</bean>
+	
+	<bean name="reportConfigDB" class="com.iflytek.vie.app.provider.database.ReportConfigDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	
+	</bean>
+	
+	<bean name="commonReportDB" class="com.iflytek.vie.app.provider.database.CommonReportDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	
+	</bean>
+	<bean name="topicHotWordStatDB" class="com.iflytek.vie.app.provider.database.TopicHotWordStatDB" >
+        <property name="hiberTemp" ref="hibernateTemplate"></property>
+    </bean>
+    
+    <bean name="topicTogatherDB" class="com.iflytek.vie.app.provider.database.TopicTogatherDB">
+    	<property name="hibernateTemplate" ref="hibernateTemplate"/>
+    </bean>
+    <bean name="batchDB" class="com.iflytek.vie.app.provider.database.BatchDB">
+    	<property name="hiberTemp" ref="hibernateTemplate"/>
+    </bean>
+    <bean name="serialTaskDB" class="com.iflytek.vie.app.provider.database.SerialTaskDB">
+    	<property name="hiberTemp" ref="hibernateTemplate"/>
+    </bean>
+    <bean name="serialDetailDB" class="com.iflytek.vie.app.provider.database.SerialDetailDB">
+    	<property name="hiberTemp" ref="hibernateTemplate"/>
+    	<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+    
+    <bean name="batchModelDB" class="com.iflytek.vie.app.provider.database.BatchModelDB">
+    	<property name="hiberTemp" ref="hibernateTemplate"/>
+    </bean>
+    
+    <bean name="batchDimensionlDB" class="com.iflytek.vie.app.provider.database.BatchDimensionDB">
+    	<property name="hiberTemp" ref="hibernateTemplate"/>
+    </bean>
+    
+    <bean name="callFilterDB" class="com.iflytek.vie.app.provider.database.CallFilterDB">
+    	<property name="hiberTemp" ref="hibernateTemplate"/>
+    </bean>
+
+	<bean name="exportInfoDB" class="com.iflytek.vie.app.provider.database.ExportInfoDB">
+		<property name="hiberTemp" ref="hibernateTemplate"/>
+	</bean>
+
+	<bean name="filterInfoDB" class="com.iflytek.vie.app.provider.database.FilterInfoDB">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+
+	<bean name="centerDownloadDB" class="com.iflytek.vie.app.provider.database.CenterDownloadDB">
+		<property name="hiberTemp" ref="hibernateTemplate"/>
+	</bean>
+	<bean name="centerDownloadTaskDB" class="com.iflytek.vie.app.provider.database.CenterDownloadTaskDB">
+		<property name="hiberTemp" ref="hibernateTemplate"/>
+	</bean>
+	
+	<bean name="StoreFileDataDB" class="com.iflytek.vie.app.provider.database.StoreFileDataDB">
+		<property name="hiberTemp" ref="hibernateTemplate"/>
+	</bean>
+</beans>

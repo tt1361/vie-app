@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.batch">
+    <class name="BatchInfo" table="batch_info">
+        <id name="id" type="int">
+            <column name="id">
+            </column>
+            <generator class="sequence">
+                <param name="sequence">batch_info_seq</param>
+            </generator>
+        </id>
+        <property name="batchId" type="string">
+            <column name="batch_id" length="50">
+            </column>
+        </property>
+        <property name="dataType" type="int">
+            <column name="data_type">
+            </column>
+        </property>
+        <property name="ifLone" type="int">
+            <column name="if_lone">
+            </column>
+        </property>
+        <property name="analysisType" type="int">
+            <column name="analysis_type">
+            </column>
+        </property>
+        <property name="status" type="int">
+            <column name="status">
+            </column>
+        </property>
+        <property name="startTime" type="java.sql.Timestamp">
+            <column name="start_time">
+            </column>
+        </property>
+        <property name="endTime" type="java.sql.Timestamp">
+            <column name="end_time">
+            </column>
+        </property>
+        <property name="importCount" type="int">
+            <column name="import_count">
+            </column>
+        </property>
+        <property name="handleCount" type="int">
+            <column name="handle_count">
+            </column>
+        </property>
+        <property name="createUser" type="string">
+            <column name="create_user" length="64">
+            </column>
+        </property>
+        <property name="remark" type="string">
+            <column name="remark" length="2000">
+            </column>
+        </property>
+        <property name="models" type="string">
+            <column name="models" length="4000">
+            </column>
+        </property>
+        <property name="failReason" type="string">
+            <column name="fail_reason" length="2000">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

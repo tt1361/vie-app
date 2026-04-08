@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.export">
+    <class name="ExportInfo" table="EXPORT_INFO">
+        <id name="id" type="integer">
+            <column name="id">
+            </column>
+            <generator class="sequence">
+                <param name="sequence">EXPORT_INFO_SEQ</param>
+            </generator>
+        </id>
+        <property name="userId" type="string">
+            <column name="user_id" length="50">
+            </column>
+        </property>
+        <property name="systemId" type="string">
+            <column name="system_id">
+            </column>
+        </property>
+        <property name="exportNum" type="integer">
+            <column name="export_num">
+            </column>
+        </property>
+        <property name="updateTime" type="java.sql.Timestamp">
+            <column name="updatetime">
+            </column>
+        </property>
+
+    </class>
+</hibernate-mapping>

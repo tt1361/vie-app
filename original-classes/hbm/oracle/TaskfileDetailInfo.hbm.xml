@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.api.datahandle">
+    <class name="com.iflytek.vie.app.api.datahandle.TaskfileDetailInfo" table="TASKFILE_DETAIL_INFO">
+        <id name="id" type="java.lang.Long">
+            <column name="ID">
+                <comment>id</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">
+                    TASKFILE_DETAIL_INFO_SEQ
+                </param>
+            </generator>
+        </id>
+        <property name="createTime" type="java.util.Date">
+            <column name="CREATE_TIME">
+            </column>
+        </property>
+         <property name="updateTime" type="java.util.Date">
+            <column name="UPDATE_TIME">
+            </column>
+        </property>
+        <property name="voiceId" type="string">
+            <column name="VOICE_ID">
+            </column>
+        </property>
+        <property name="belongFile" type="string">
+            <column name="BELONG_FILE">
+            </column>
+        </property>
+        <property name="callTime" type="java.util.Date">
+            <column name="CALL_TIME">
+            </column>
+        </property>
+        <property name="status" type="java.lang.Integer">
+            <column name="STATUS">
+            </column>
+        </property>
+        <property name="failStep" type="java.lang.Integer">
+            <column name="FAIL_STEP">
+            </column>
+        </property>
+        <property name="voiceUri" type="string">
+            <column name="VOICE_URI">
+            </column>
+        </property>
+        <property name="dataSource" type="string">
+            <column name="dataSource">
+            </column>
+        </property>
+ 
+
+    </class>
+
+</hibernate-mapping>
