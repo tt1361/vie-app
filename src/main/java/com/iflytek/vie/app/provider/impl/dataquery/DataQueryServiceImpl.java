@@ -20,6 +20,9 @@ import com.iflytek.vie.app.provider.common.DataSourceInfo;
 import com.iflytek.vie.dynamic.DynamicEsSource;
 import com.iflytek.vie.utils.ExcuteContext;
 import com.iflytek.vie.utils.StringUtils;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -547,6 +550,7 @@ public class DataQueryServiceImpl implements DataQueryService {
    }
 
    public Object getGramData(DataQueryRequest queryRequest) throws VieAppServiceException {
+      this.logger.info("queryRequest数据：{}", queryRequest.toString());
       Object resultObj = null;
       if (StringUtils.isNullOrEmpry(queryRequest.getVoicePath())) {
          this.logger.error("voicePath 参数不能为空");
@@ -588,10 +592,67 @@ public class DataQueryServiceImpl implements DataQueryService {
             try {
                String voiceUrl = queryRequest.getVoicePath();
                voiceUrl = voiceUrl.replace("|$|", "#");
-               PlayerDataRequest playerDataRequest = new PlayerDataRequest(voiceUrl, queryRequest.getMacTag());
+               String macTag = queryRequest.getMacTag();
+
+               // 判断是新录音还是老录音（macTag 以 "__LISTEN_URL__" 开头表示新录音）
+               String listenUrl = null;
+               boolean isNewRecording = false;
+               String originalMacTag = macTag; // 保存原始 macTag
+               if ("02".equals(voiceUrl) && macTag != null && macTag.startsWith("__LISTEN_URL__")) {
+                  listenUrl = macTag.substring("__LISTEN_URL__".length());
+                  isNewRecording = true;
+                  macTag = ""; // 老录音逻辑需要空的 macTag
+               }
+
+               // 创建 PlayerDataRequest（对于老录音使用 originalMacTag）
+               PlayerDataRequest playerDataRequest = new PlayerDataRequest(voiceUrl, isNewRecording ? "" : originalMacTag);
+
                if ("wave-format".equals(voice_format)) {
-                  InitialiseWaveFormat iwf = this.playerService.getVoiceFormatService(playerDataRequest);
-                  resultObj = iwf;
+                  if (isNewRecording) {
+                     // 新录音：通过 HTTP 请求获取音频格式信息
+                     this.logger.info("新录音获取wave-format，通过listenUrl: {}", listenUrl);
+                     URL url = new URL(listenUrl);
+                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                     conn.setRequestMethod("GET");
+                     conn.setConnectTimeout(5000);
+                     conn.setReadTimeout(30000);
+                     conn.setRequestProperty("Range", "bytes=0-43"); // 只获取WAV header
+
+                     int responseCode = conn.getResponseCode();
+                     this.logger.info("HTTP响应码: {}", responseCode);
+
+                     InputStream inputStream = conn.getInputStream();
+                     byte[] headerBytes = new byte[44];
+                     int bytesRead = inputStream.read(headerBytes);
+                     inputStream.close();
+                     conn.disconnect();
+
+                     if (bytesRead >= 44) {
+                        // 解析WAV header
+                        int channels = littleEndianToInt(headerBytes[22], headerBytes[23]);
+                        int sampleRate = littleEndianToInt(headerBytes[24], headerBytes[25], headerBytes[26], headerBytes[27]);
+                        int bitsPerSample = littleEndianToInt(headerBytes[34], headerBytes[35]);
+                        int blockAlign = channels * bitsPerSample / 8;
+                        int dataLength = littleEndianToInt(headerBytes[40], headerBytes[41], headerBytes[42], headerBytes[43]);
+
+                        InitialiseWaveFormat iwf = new InitialiseWaveFormat(
+                           1, // PCM format
+                           (short)bitsPerSample,
+                           (short)blockAlign,
+                           (short)channels,
+                           sampleRate,
+                           dataLength / blockAlign
+                        );
+                        resultObj = iwf;
+                        this.logger.info("新录音wave-format解析完成: channels={}, sampleRate={}, bitsPerSample={}",
+                           channels, sampleRate, bitsPerSample);
+                     } else {
+                        throw new VieAppServiceException("无法读取音频文件头部");
+                     }
+                  } else {
+                     InitialiseWaveFormat iwf = this.playerService.getVoiceFormatService(playerDataRequest);
+                     resultObj = iwf;
+                  }
                } else {
                   if (!"channel-data".equals(voice_format)) {
                      this.logger.error("你的VoiceGram-Action参数呢?");
@@ -606,17 +667,64 @@ public class DataQueryServiceImpl implements DataQueryService {
                   int startSample = Integer.parseInt(sampleRange[0]);
                   int endSample = Integer.parseInt(sampleRange[1]);
                   int bsize = Integer.parseInt(blockSize);
-                  playerDataRequest.setChannel(chan);
-                  playerDataRequest.setOffset(startSample);
-                  playerDataRequest.setEndSample(endSample);
-                  playerDataRequest.setBlockSize(bsize);
-                  String voiceHeaderData1 = this.playerService.getAudioGramService(playerDataRequest);
-                  if (voiceHeaderData1 != null && !voiceHeaderData1.endsWith("]")) {
-                     voiceHeaderData1 = voiceHeaderData1 + "]";
-                  }
 
-                  Object[] channelData = (Object[])JSON.parseObject(voiceHeaderData1, Object[].class);
-                  resultObj = channelData;
+                  if (isNewRecording) {
+                     // 新录音：通过 listenUrl 获取音频数据
+                     this.logger.info("新录音获取channel-data，通过listenUrl: {}, samples={}-{}, channel={}",
+                        listenUrl, startSample, endSample, chan);
+
+                     URL url = new URL(listenUrl);
+                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                     conn.setRequestMethod("GET");
+                     conn.setConnectTimeout(5000);
+                     conn.setReadTimeout(30000);
+
+                     // 计算字节范围 (假设16位采样，单声道或双声道)
+                     int bytesPerSample = 2; // 16-bit
+                     int startByte = startSample * bytesPerSample * chan;
+                     int endByte = (endSample + 1) * bytesPerSample * chan - 1;
+                     conn.setRequestProperty("Range", "bytes=" + startByte + "-" + endByte);
+
+                     InputStream inputStream = conn.getInputStream();
+                     byte[] audioData = new byte[bsize];
+                     int totalBytesRead = 0;
+                     int bytesRead;
+                     while ((bytesRead = inputStream.read(audioData, totalBytesRead, bsize - totalBytesRead)) != -1) {
+                        totalBytesRead += bytesRead;
+                        if (totalBytesRead >= bsize) break;
+                     }
+                     inputStream.close();
+                     conn.disconnect();
+
+                     // 解析音频数据为幅度值
+                     List<Double> amplitudes = new ArrayList<>();
+                     for (int i = 0; i < totalBytesRead - (totalBytesRead % (bytesPerSample * chan)); i += bytesPerSample * chan) {
+                        double sum = 0;
+                        for (int c = 0; c < chan; c++) {
+                           int low = audioData[i + c * bytesPerSample] & 0xFF;
+                           int high = audioData[i + c * bytesPerSample + 1] & 0xFF;
+                           int sample = (high << 8) | low;
+                           if (sample >= 32768) sample -= 65536;
+                           sum += Math.abs(sample);
+                        }
+                        amplitudes.add(sum / chan / 32768.0);
+                     }
+
+                     resultObj = amplitudes.toArray(new Double[0]);
+                     this.logger.info("新录音channel-data解析完成，幅度数据点数: {}", amplitudes.size());
+                  } else {
+                     playerDataRequest.setChannel(chan);
+                     playerDataRequest.setOffset(startSample);
+                     playerDataRequest.setEndSample(endSample);
+                     playerDataRequest.setBlockSize(bsize);
+                     String voiceHeaderData1 = this.playerService.getAudioGramService(playerDataRequest);
+                     if (voiceHeaderData1 != null && !voiceHeaderData1.endsWith("]")) {
+                        voiceHeaderData1 = voiceHeaderData1 + "]";
+                     }
+
+                     Object[] channelData = (Object[])JSON.parseObject(voiceHeaderData1, Object[].class);
+                     resultObj = channelData;
+                  }
                }
 
                return resultObj;
@@ -711,5 +819,19 @@ public class DataQueryServiceImpl implements DataQueryService {
 
    public void setDimensionService(DimensionService dimensionService) {
       this.dimensionService = dimensionService;
+   }
+
+   /**
+    * 从字节数组中读取小端序short值
+    */
+   private int littleEndianToInt(byte b1, byte b2) {
+      return ((b2 & 0xFF) << 8) | (b1 & 0xFF);
+   }
+
+   /**
+    * 从字节数组中读取小端序int值
+    */
+   private int littleEndianToInt(byte b1, byte b2, byte b3, byte b4) {
+      return ((b4 & 0xFF) << 24) | ((b3 & 0xFF) << 16) | ((b2 & 0xFF) << 8) | (b1 & 0xFF);
    }
 }
