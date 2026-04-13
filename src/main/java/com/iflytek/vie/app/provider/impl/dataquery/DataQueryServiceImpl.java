@@ -2,10 +2,12 @@ package com.iflytek.vie.app.provider.impl.dataquery;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
 import com.iflytek.vie.app.api.dataquery.DataQueryService;
 import com.iflytek.vie.app.api.dimension.DimensionService;
 import com.iflytek.vie.app.api.player.PlayerService;
 import com.iflytek.vie.app.api.player.server.wave.objects.InitialiseWaveFormat;
+import com.iflytek.vie.app.api.player.server.wave.objects.WaveFormat;
 import com.iflytek.vie.app.exception.VieAppServiceException;
 import com.iflytek.vie.app.pojo.dataquery.DataFilter;
 import com.iflytek.vie.app.pojo.dataquery.DataQueryRequest;
@@ -19,6 +21,7 @@ import com.iflytek.vie.app.pojo.player.VoiceBaseInfo;
 import com.iflytek.vie.app.provider.common.DataSourceInfo;
 import com.iflytek.vie.dynamic.DynamicEsSource;
 import com.iflytek.vie.utils.ExcuteContext;
+import com.iflytek.vie.utils.RestUtil;
 import com.iflytek.vie.utils.StringUtils;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -606,51 +609,19 @@ public class DataQueryServiceImpl implements DataQueryService {
 
                // 创建 PlayerDataRequest（对于老录音使用 originalMacTag）
                PlayerDataRequest playerDataRequest = new PlayerDataRequest(voiceUrl, isNewRecording ? "" : originalMacTag);
-
+               InitialiseWaveFormat iwf = null;
                if ("wave-format".equals(voice_format)) {
                   if (isNewRecording) {
-                     // 新录音：通过 HTTP 请求获取音频格式信息
+                     // 新录音：通过 HTTP 获取 WAV header
                      this.logger.info("新录音获取wave-format，通过listenUrl: {}", listenUrl);
-                     URL url = new URL(listenUrl);
-                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                     conn.setRequestMethod("GET");
-                     conn.setConnectTimeout(5000);
-                     conn.setReadTimeout(30000);
-                     conn.setRequestProperty("Range", "bytes=0-43"); // 只获取WAV header
-
-                     int responseCode = conn.getResponseCode();
-                     this.logger.info("HTTP响应码: {}", responseCode);
-
-                     InputStream inputStream = conn.getInputStream();
-                     byte[] headerBytes = new byte[44];
-                     int bytesRead = inputStream.read(headerBytes);
-                     inputStream.close();
-                     conn.disconnect();
-
-                     if (bytesRead >= 44) {
-                        // 解析WAV header
-                        int channels = littleEndianToInt(headerBytes[22], headerBytes[23]);
-                        int sampleRate = littleEndianToInt(headerBytes[24], headerBytes[25], headerBytes[26], headerBytes[27]);
-                        int bitsPerSample = littleEndianToInt(headerBytes[34], headerBytes[35]);
-                        int blockAlign = channels * bitsPerSample / 8;
-                        int dataLength = littleEndianToInt(headerBytes[40], headerBytes[41], headerBytes[42], headerBytes[43]);
-
-                        InitialiseWaveFormat iwf = new InitialiseWaveFormat(
-                           1, // PCM format
-                           (short)bitsPerSample,
-                           (short)blockAlign,
-                           (short)channels,
-                           sampleRate,
-                           dataLength / blockAlign
-                        );
-                        resultObj = iwf;
-                        this.logger.info("新录音wave-format解析完成: channels={}, sampleRate={}, bitsPerSample={}",
-                           channels, sampleRate, bitsPerSample);
-                     } else {
-                        throw new VieAppServiceException("无法读取音频文件头部");
-                     }
+                     RestUtil restUtil = new RestUtil();
+                     String requst = restUtil.getRequst(listenUrl);
+                     Map<String, Object> vgsData = (Map<String, Object>)mapper.readValue(requst, Map.class);
+                     WaveFormat.Builder builder = this.getWareFormatBuilder(vgsData);
+                      iwf = this.waveFormat(builder);
+                     resultObj = iwf;
                   } else {
-                     InitialiseWaveFormat iwf = this.playerService.getVoiceFormatService(playerDataRequest);
+                     iwf = this.playerService.getVoiceFormatService(playerDataRequest);
                      resultObj = iwf;
                   }
                } else {
@@ -834,4 +805,46 @@ public class DataQueryServiceImpl implements DataQueryService {
    private int littleEndianToInt(byte b1, byte b2, byte b3, byte b4) {
       return ((b4 & 0xFF) << 24) | ((b3 & 0xFF) << 16) | ((b2 & 0xFF) << 8) | (b1 & 0xFF);
    }
+
+   private WaveFormat.Builder getWareFormatBuilder(Map<String, Object> vgsData) {
+      int headerLength = 44;
+      int datalength = Integer.parseInt(vgsData.get("dataLength").toString());
+      int waveformat = Integer.parseInt(vgsData.get("audioformat").toString());
+      int samplaRate = Integer.parseInt(vgsData.get("samplerate").toString());
+      int channel = Integer.parseInt(vgsData.get("channels").toString());
+      int blockAlign = Integer.parseInt(vgsData.get("blockalign").toString());
+      int bitsPerSample = Integer.parseInt(vgsData.get("bitspersample").toString());
+      return new WaveFormat.Builder()
+              .blockAlign((short)blockAlign)
+              .headerLength(headerLength)
+              .dataLength(datalength)
+              .waveformatEncoding(waveformat)
+              .sampleRate(samplaRate)
+              .bitsPerSample((short)bitsPerSample)
+              .channels((short)channel)
+              .existHeader(true);
+   }
+
+   public InitialiseWaveFormat waveFormat(WaveFormat.Builder builder) {
+      try {
+         InitialiseWaveFormat format = this.InitialisedWaveFormat(builder.build());
+         this.logger.info("Return gram initialise data: wave-format, files: {}, initialised wave format: {}" + builder.toString() + format.toString());
+         return format;
+      } catch (Throwable var3) {
+         throw Throwables.propagate(var3);
+      }
+   }
+
+   private InitialiseWaveFormat InitialisedWaveFormat(WaveFormat format) {
+      return new InitialiseWaveFormat(
+              format.getWaveFormatEncoding(),
+              format.getBitsPerSample(),
+              format.getBlockAlign(),
+              format.getChannels(),
+              format.getSampleRate(),
+              (int)(format.getDataLength() / format.getBlockAlign())
+      );
+   }
+
+
 }
