@@ -2,15 +2,15 @@
 
 This project was reconstructed from:
 
-- `/Users/tangmingxiang/Desktop/vie-app-base-provider-0.0.1-SNAPSHOT.jar`
+- `../vie-app-base-provider-0.0.1-SNAPSHOT.jar`
 
 Reconstruction details:
 
-- Java classes were decompiled with IntelliJ's built-in Java decompiler
+- Source code was decompiled from the packaged jar
+- Original embedded `pom.xml` was restored to the project root
 - Non-class resources were restored to `src/main/resources`
 - Embedded runtime dependency jars were extracted to `boot-lib/`
 - Original bytecode/resources were preserved in `original-classes/`
-- Embedded Maven metadata was restored to the project root
 
 Project layout:
 
@@ -21,13 +21,9 @@ Project layout:
 - `original-classes/`: original classes/resources extracted from the jar
 - `MANIFEST.MF.original`: original manifest from the jar
 
-Build:
-
-```bash
-mvn -q -DskipTests package
-```
-
 Notes:
 
 - Decompiled code may differ from the original handwritten source in formatting, local variable names, comments, and some generic type details.
-- The restored `pom.xml` references system-scope dependencies under `boot-lib/`.
+- The restored `pom.xml` references internal/private artifacts such as `com.iflytek.vie:*`; depending on your environment, Maven may not resolve them directly.
+- The current `mvn package` path is wired to `original-classes/`, which contains bytecode/resources extracted from the original jar. This guarantees packaging succeeds even though the decompiled Java sources are not yet fully source-rebuildable.
+- If you only need to browse or patch code, the current tree is already usable in the IDE.

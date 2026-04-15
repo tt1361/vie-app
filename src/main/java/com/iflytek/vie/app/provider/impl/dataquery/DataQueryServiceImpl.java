@@ -1,6 +1,7 @@
 package com.iflytek.vie.app.provider.impl.dataquery;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 import com.iflytek.vie.app.api.dataquery.DataQueryService;
 import com.iflytek.vie.app.api.dimension.DimensionService;
@@ -20,8 +21,8 @@ import com.iflytek.vie.app.pojo.player.VoiceBaseInfo;
 import com.iflytek.vie.app.provider.common.DataSourceInfo;
 import com.iflytek.vie.dynamic.DynamicEsSource;
 import com.iflytek.vie.utils.ExcuteContext;
+import com.iflytek.vie.utils.RestUtil;
 import com.iflytek.vie.utils.StringUtils;
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -30,10 +31,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javazoom.jl.decoder.Bitstream;
-import javazoom.jl.decoder.Decoder;
-import javazoom.jl.decoder.Header;
-import javazoom.jl.decoder.SampleBuffer;
 import org.anydrill.calculate.set.ResultSet;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -45,6 +42,7 @@ public class DataQueryServiceImpl implements DataQueryService {
    private PlayerService playerService;
    private DimensionService dimensionService;
    public static final int playRangeSize = 2000;
+   private ObjectMapper mapper = new ObjectMapper();
    private DataSourceInfo dataSourceInfo;
 
    public VoiceDataResponse getVoiceList_ByVoice(VoiceDataRequest voiceDataRequest) throws VieAppServiceException {
@@ -599,22 +597,13 @@ public class DataQueryServiceImpl implements DataQueryService {
                voiceUrl = voiceUrl.replace("|$|", "#");
                String macTag = queryRequest.getMacTag();
 
-               // 判断是新录音还是老录音（新录音的 macTag 会携带时长和 listenUrl）
-               long newRecordingDurationMs = 0L;
+               // 判断是新录音还是老录音（macTag 以 "__LISTEN_URL__" 开头表示新录音）
                String listenUrl = null;
                boolean isNewRecording = false;
                String originalMacTag = macTag; // 保存原始 macTag
-               if ("02".equals(voiceUrl) && macTag != null && macTag.startsWith("__NEW_RECORDING__")) {
-                  int listenUrlStart = macTag.indexOf("__LISTEN_URL__");
-                  String durationValue = listenUrlStart == -1 ? macTag.substring("__NEW_RECORDING__".length()) : macTag.substring("__NEW_RECORDING__".length(), listenUrlStart);
-                  if (!StringUtils.isNullOrEmpry(durationValue)) {
-                     newRecordingDurationMs = Long.parseLong(durationValue);
-                  }
-                  if (listenUrlStart != -1) {
-                     listenUrl = macTag.substring(listenUrlStart + "__LISTEN_URL__".length());
-                  }
-
-                  isNewRecording = !StringUtils.isNullOrEmpry(listenUrl);
+               if ("02".equals(voiceUrl) && macTag != null && macTag.startsWith("__LISTEN_URL__")) {
+                  listenUrl = macTag.substring("__LISTEN_URL__".length());
+                  isNewRecording = true;
                   macTag = ""; // 老录音逻辑需要空的 macTag
                }
 
@@ -623,9 +612,13 @@ public class DataQueryServiceImpl implements DataQueryService {
                InitialiseWaveFormat iwf = null;
                if ("wave-format".equals(voice_format)) {
                   if (isNewRecording) {
-                     this.logger.info("新录音解析MP3波形元数据，durationMs={}, listenUrl={}", newRecordingDurationMs, listenUrl);
-                     WaveFormat.Builder builder = this.buildMp3WaveFormatBuilder(listenUrl, newRecordingDurationMs);
-                     iwf = this.waveFormat(builder);
+                     // 新录音：通过 HTTP 获取 WAV header
+                     this.logger.info("新录音获取wave-format，通过listenUrl: {}", listenUrl);
+                     RestUtil restUtil = new RestUtil();
+                     String requst = restUtil.getRequst(listenUrl);
+                     Map<String, Object> vgsData = (Map<String, Object>)mapper.readValue(requst, Map.class);
+                     WaveFormat.Builder builder = this.getWareFormatBuilder(vgsData);
+                      iwf = this.waveFormat(builder);
                      resultObj = iwf;
                   } else {
                      iwf = this.playerService.getVoiceFormatService(playerDataRequest);
@@ -647,10 +640,49 @@ public class DataQueryServiceImpl implements DataQueryService {
                   int bsize = Integer.parseInt(blockSize);
 
                   if (isNewRecording) {
-                     this.logger.info("新录音解析MP3波形数据，samples={}-{}, channel={}, durationMs={}, listenUrl={}",
-                        startSample, endSample, chan, newRecordingDurationMs, listenUrl);
-                     resultObj = this.decodeMp3ChannelData(listenUrl, newRecordingDurationMs, startSample, endSample, chan, bsize);
-                     this.logger.info("新录音channel-data解析完成，幅度数据点数: {}", ((Object[])resultObj).length);
+                     // 新录音：通过 listenUrl 获取音频数据
+                     this.logger.info("新录音获取channel-data，通过listenUrl: {}, samples={}-{}, channel={}",
+                        listenUrl, startSample, endSample, chan);
+
+                     URL url = new URL(listenUrl);
+                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                     conn.setRequestMethod("GET");
+                     conn.setConnectTimeout(5000);
+                     conn.setReadTimeout(30000);
+
+                     // 计算字节范围 (假设16位采样，单声道或双声道)
+                     int bytesPerSample = 2; // 16-bit
+                     int startByte = startSample * bytesPerSample * chan;
+                     int endByte = (endSample + 1) * bytesPerSample * chan - 1;
+                     conn.setRequestProperty("Range", "bytes=" + startByte + "-" + endByte);
+
+                     InputStream inputStream = conn.getInputStream();
+                     byte[] audioData = new byte[bsize];
+                     int totalBytesRead = 0;
+                     int bytesRead;
+                     while ((bytesRead = inputStream.read(audioData, totalBytesRead, bsize - totalBytesRead)) != -1) {
+                        totalBytesRead += bytesRead;
+                        if (totalBytesRead >= bsize) break;
+                     }
+                     inputStream.close();
+                     conn.disconnect();
+
+                     // 解析音频数据为幅度值
+                     List<Double> amplitudes = new ArrayList<>();
+                     for (int i = 0; i < totalBytesRead - (totalBytesRead % (bytesPerSample * chan)); i += bytesPerSample * chan) {
+                        double sum = 0;
+                        for (int c = 0; c < chan; c++) {
+                           int low = audioData[i + c * bytesPerSample] & 0xFF;
+                           int high = audioData[i + c * bytesPerSample + 1] & 0xFF;
+                           int sample = (high << 8) | low;
+                           if (sample >= 32768) sample -= 65536;
+                           sum += Math.abs(sample);
+                        }
+                        amplitudes.add(sum / chan / 32768.0);
+                     }
+
+                     resultObj = amplitudes.toArray(new Double[0]);
+                     this.logger.info("新录音channel-data解析完成，幅度数据点数: {}", amplitudes.size());
                   } else {
                      playerDataRequest.setChannel(chan);
                      playerDataRequest.setOffset(startSample);
@@ -760,194 +792,18 @@ public class DataQueryServiceImpl implements DataQueryService {
       this.dimensionService = dimensionService;
    }
 
-   private WaveFormat.Builder buildMp3WaveFormatBuilder(String listenUrl, long durationMs) throws Exception {
-      Mp3Meta meta = this.readMp3Meta(listenUrl, durationMs);
-      return new WaveFormat.Builder()
-         .blockAlign(meta.blockAlign)
-         .headerLength(44)
-         .dataLength(meta.dataLength)
-         .waveformatEncoding(1)
-         .sampleRate(meta.sampleRate)
-         .bitsPerSample(meta.bitsPerSample)
-         .channels(meta.channels)
-         .existHeader(true);
+   /**
+    * 从字节数组中读取小端序short值
+    */
+   private int littleEndianToInt(byte b1, byte b2) {
+      return ((b2 & 0xFF) << 8) | (b1 & 0xFF);
    }
 
-   private Double[] decodeMp3ChannelData(String listenUrl, long durationMs, int startSample, int endSample, int requestedChannel, int blockSize) throws Exception {
-      Mp3Meta meta = this.readMp3Meta(listenUrl, durationMs);
-      int channelIndex = requestedChannel;
-      if (channelIndex < 0) {
-         channelIndex = 0;
-      } else if (channelIndex >= meta.channels && channelIndex - 1 >= 0 && channelIndex - 1 < meta.channels) {
-         channelIndex = channelIndex - 1;
-      } else if (channelIndex >= meta.channels) {
-         channelIndex = meta.channels - 1;
-      }
-
-      List<Double> amplitudes = new ArrayList<Double>();
-      HttpURLConnection conn = this.openListenUrlConnection(listenUrl);
-      InputStream inputStream = null;
-      Bitstream bitstream = null;
-
-      try {
-         inputStream = new BufferedInputStream(conn.getInputStream());
-         bitstream = new Bitstream(inputStream);
-         Decoder decoder = new Decoder();
-         int currentSample = 0;
-         int normalizedBlockSize = Math.max(blockSize, 1);
-         int bufferedSamples = 0;
-         short blockMin = 0;
-         short blockMax = 0;
-
-         while(true) {
-            Header header = bitstream.readFrame();
-            if (header == null) {
-               break;
-            }
-
-            SampleBuffer sampleBuffer = (SampleBuffer)decoder.decodeFrame(header, bitstream);
-            short[] buffer = sampleBuffer.getBuffer();
-            int frameSampleCount = sampleBuffer.getBufferLength() / meta.channels;
-
-            for(int i = 0; i < frameSampleCount; ++i) {
-               if (currentSample > endSample) {
-                  break;
-               }
-
-               if (currentSample >= startSample) {
-                  int offset = i * meta.channels + channelIndex;
-                  if (offset < sampleBuffer.getBufferLength()) {
-                     short sample = buffer[offset];
-                     if (normalizedBlockSize <= 1) {
-                        amplitudes.add((double)sample);
-                     } else if (bufferedSamples == 0) {
-                        blockMin = sample;
-                        blockMax = sample;
-                        bufferedSamples = 1;
-                     } else {
-                        if (sample < blockMin) {
-                           blockMin = sample;
-                        }
-
-                        if (sample > blockMax) {
-                           blockMax = sample;
-                        }
-
-                        ++bufferedSamples;
-                     }
-
-                     if (normalizedBlockSize > 1 && bufferedSamples >= normalizedBlockSize) {
-                        amplitudes.add((double)blockMin);
-                        amplitudes.add((double)blockMax);
-                        bufferedSamples = 0;
-                     }
-                  }
-               }
-
-               ++currentSample;
-            }
-
-            bitstream.closeFrame();
-            if (currentSample > endSample) {
-               break;
-            }
-         }
-
-         if (normalizedBlockSize > 1 && bufferedSamples > 0) {
-            amplitudes.add((double)blockMin);
-            amplitudes.add((double)blockMax);
-         }
-      } finally {
-         if (bitstream != null) {
-            try {
-               bitstream.close();
-            } catch (Exception var16) {
-               this.logger.warn("关闭MP3 bitstream失败", var16);
-            }
-         }
-
-         if (inputStream != null) {
-            try {
-               inputStream.close();
-            } catch (Exception var15) {
-               this.logger.warn("关闭MP3输入流失败", var15);
-            }
-         }
-
-         conn.disconnect();
-      }
-
-      return amplitudes.toArray(new Double[amplitudes.size()]);
-   }
-
-   private Mp3Meta readMp3Meta(String listenUrl, long durationMs) throws Exception {
-      HttpURLConnection conn = this.openListenUrlConnection(listenUrl);
-      InputStream inputStream = null;
-      Bitstream bitstream = null;
-
-      try {
-         inputStream = new BufferedInputStream(conn.getInputStream());
-         bitstream = new Bitstream(inputStream);
-         Header header = bitstream.readFrame();
-         if (header == null) {
-            throw new VieAppServiceException("MP3音频流为空，无法解析波形");
-         }
-
-         Decoder decoder = new Decoder();
-         SampleBuffer sampleBuffer = (SampleBuffer)decoder.decodeFrame(header, bitstream);
-         short channels = (short)Math.max(sampleBuffer.getChannelCount(), 1);
-         short bitsPerSample = 16;
-         short blockAlign = (short)(channels * bitsPerSample / 8);
-         int sampleRate = sampleBuffer.getSampleFrequency();
-         long normalizedDurationMs = Math.max(durationMs, 1000L);
-         long totalSamples = normalizedDurationMs * sampleRate / 1000L;
-         long dataLength = totalSamples * blockAlign;
-         bitstream.closeFrame();
-         return new Mp3Meta(channels, bitsPerSample, blockAlign, sampleRate, dataLength);
-      } finally {
-         if (bitstream != null) {
-            try {
-               bitstream.close();
-            } catch (Exception var14) {
-               this.logger.warn("关闭MP3 bitstream失败", var14);
-            }
-         }
-
-         if (inputStream != null) {
-            try {
-               inputStream.close();
-            } catch (Exception var13) {
-               this.logger.warn("关闭MP3输入流失败", var13);
-            }
-         }
-
-         conn.disconnect();
-      }
-   }
-
-   private HttpURLConnection openListenUrlConnection(String listenUrl) throws Exception {
-      URL url = new URL(listenUrl);
-      HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-      conn.setRequestMethod("GET");
-      conn.setConnectTimeout(5000);
-      conn.setReadTimeout(30000);
-      return conn;
-   }
-
-   private static final class Mp3Meta {
-      private final short channels;
-      private final short bitsPerSample;
-      private final short blockAlign;
-      private final int sampleRate;
-      private final long dataLength;
-
-      private Mp3Meta(short channels, short bitsPerSample, short blockAlign, int sampleRate, long dataLength) {
-         this.channels = channels;
-         this.bitsPerSample = bitsPerSample;
-         this.blockAlign = blockAlign;
-         this.sampleRate = sampleRate;
-         this.dataLength = dataLength;
-      }
+   /**
+    * 从字节数组中读取小端序int值
+    */
+   private int littleEndianToInt(byte b1, byte b2, byte b3, byte b4) {
+      return ((b4 & 0xFF) << 24) | ((b3 & 0xFF) << 16) | ((b2 & 0xFF) << 8) | (b1 & 0xFF);
    }
 
    private WaveFormat.Builder getWareFormatBuilder(Map<String, Object> vgsData) {
