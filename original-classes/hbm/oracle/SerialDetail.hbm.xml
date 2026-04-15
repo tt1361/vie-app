@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.serial">
+    <class name="SerialDetail" table="serial_detail">
+        <id name="id" type="int">
+            <column name="id">
+            </column>
+            <generator class="sequence">
+                <param name="sequence">serial_detail_seq</param>
+            </generator>
+        </id>
+        <property name="batchId" type="string">
+            <column name="batch_id" length="17">
+            </column>
+        </property>
+        <property name="serialId" type="string">
+            <column name="serial_id" length="50">
+            </column>
+        </property>
+        <property name="dimensions" type="string">
+            <column name="dimensions" length="4000">
+            </column>
+        </property>
+        <property name="processResult" type="int">
+            <column name="process_result">
+            </column>
+        </property>
+        <property name="createTime" type="java.sql.Timestamp">
+            <column name="create_time">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

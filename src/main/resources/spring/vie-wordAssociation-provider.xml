@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<bean name="WordAssociation" class="com.iflytek.vie.app.provider.impl.tools.wordAssociation.WordAssociationServiceImpl">
+		<property name="fileName" value="${fileName}"/>
+	</bean>
+
+
+    <bean name="IFlyFOD" class="com.iflytek.vie.jni.IFlyFOD" init-method="init">
+     <property name="fileAdress" value="${fileAddress}"/>
+</bean>
+	<dubbo:service interface="com.iflytek.vie.app.api.tools.WordAssociationService"
+                   ref="WordAssociation" version="1.0" timeout="3000" retries="0" delay="-1"/>
+</beans>

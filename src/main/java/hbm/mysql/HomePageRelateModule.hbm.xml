@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.custom">
+    <class name="HomePageRelateModule"
+           table="HOMEPAGE_RELATE_MODULE">
+
+        <id name="id" type="java.lang.Long">
+            <column name="ID">
+                <comment>ID</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+
+        <property name="moduleName" type="java.lang.String">
+            <column name="MODULE_NAME"></column>
+        </property>
+        <property name="pageId" type="java.lang.Long">
+            <column name="PAGE_ID"></column>
+        </property>
+        <property name="moduleType" type="java.lang.Integer">
+            <column name="MODULE_TYPE" ></column>
+        </property>
+        <property name="moduleId" type="java.lang.Long">
+            <column name="MODULE_ID"></column>
+        </property>
+        <property name="moduleDetailInfo" type="java.lang.String">
+            <column name="MODULE_DETAIL_INFO"></column>
+        </property>
+        <property name="contentType" type="java.lang.Integer">
+            <column name="CONTENT_TYPE"></column>
+        </property>
+        <property name="contentParam" type="java.lang.String">
+            <column name="CONTENT_PARAM"></column>
+        </property>
+        <property name="dimensions" type="java.lang.String">
+            <column name="DIMENSIONS"></column>
+        </property>
+        <property name="picturesShow" type="java.lang.Integer">
+            <column name="PICTURES_SHOW"></column>
+        </property>
+        <property name="createTime" type="java.util.Date">
+            <column name="CREATE_TIME"></column>
+        </property>
+        <property name="createUser" type="java.lang.String">
+            <column name="CREATE_USER"></column>
+        </property>
+        <property name="sortOrder" type="java.lang.Integer">
+            <column name="SORT_ORDER"></column>
+        </property>
+        
+    </class>
+
+</hibernate-mapping>

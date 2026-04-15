@@ -1,0 +1,97 @@
+package com.iflytek.vie.app.provider.ruleparse;
+
+import java.io.Serializable;
+import java.util.HashMap;
+
+public class ConstantPlatform implements Serializable {
+   private static final long serialVersionUID = -992595192476933049L;
+   public static HashMap<String, String> dimTime = new HashMap<>();
+   public static String reportConD = "condition";
+   public static String reportConDFiled = "filed";
+   public static String reportConDType = "type";
+   public static String reportConDValue = "value";
+   public static String tabCol = "column";
+   public static String tabColText = "column";
+   public static String tabColType = "type";
+   public static String tabColFiled = "filed";
+   public static String tabColExp = "expression";
+   public static String tabColShowType = "showType";
+   public static String tabType = "tableType";
+   public static String pieLegend = "legend";
+   public static String pieMeasure = "measure";
+   public static String pieMText = "text";
+   public static String pieMExp = "expression";
+   public static String pieMShowType = "showType";
+   public static String pieMType = "type";
+   public static String pieData = "data";
+   public static String pieValue = "value";
+   public static String lineColOrder = "order";
+   public static String lineColOrderType = "orderType";
+   public static String lineColXAxis = "xAxis";
+   public static String lineColMainAxis = "mainAxis";
+   public static String lineColSecondaryAxis = "secondaryAxis";
+   public static String lineColMeasure = "measure";
+   public static String lineColChartType = "chartType";
+   public static String lineColType = "type";
+   public static String lineColExp = "expression";
+   public static String lineColShowType = "showType";
+   public static String lineColValue = "value";
+   public static String lineColText = "text";
+   public static String lineColFiled = "filed";
+   public static String measure = "measure";
+   public static String measureName = "measureName";
+   public static String expressionParam = "expressionParam";
+   public static String reportGroupName = "共享组";
+   public static String reportGroupUser = "root";
+   public static String dataSource = "dateSource";
+   public static String dataSourceType = "type";
+   public static String dataSourceTask = "dpms";
+   public static String dataSourceVoice = "dps";
+   public static final int ZORE = 0;
+   public static final int ONE = 1;
+   public static final int TWO = 2;
+   public static final int THREE = 3;
+   public static final int FOUR = 4;
+   public static final int FIVE = 5;
+   public static final int SIX = 6;
+   public static final int SEVEN = 7;
+   public static final String RET = "ret";
+   public static final String FILTER = "filter";
+   public static final String FILTER_LIST = "filterList";
+   public static final String UP_TO_NOW = "uptonow";
+   public static final String TIIMETYPE = "timeType";
+   public static final String TIMEVALUE = "timeValue";
+   public static final String KEY = "key";
+   public static final String NAME = "name";
+   public static final String TYPE = "type";
+   public static final String DATA_TYPE = "dataType";
+   public static final String VALUE = "value";
+   public static final String TIMESTAMP = "timestamp";
+   public static final String STRING = "string";
+   public static final String INT = "int";
+   public static final String LONG = "long";
+   public static final String FLOAT = "float";
+   public static final String DOUBLE = "double";
+   public static final String VOICE = "voice";
+   public static final String TASK = "task";
+   public static final String DAY_FORMAT = "yyyy-MM-dd";
+   public static final String DAY_FORMAT_NEW = "yyyy-MM-dd HH:mm:ss";
+   public static final long DAY_MILLS = 86400000L;
+   public static final int COMBINE_RULE = 2;
+   public static final int TEXT_RULE = 2;
+   public static final int TAG_RULE = 2;
+   public static final String EXCLUDE = "exclude";
+
+   static {
+      dimTime.put("dimYear", "精确到年");
+      dimTime.put("dimMonth", "精确到月");
+      dimTime.put("dimDay", "精确到天");
+      dimTime.put("dimHour", "精确到时");
+   }
+
+   public interface TimeType {
+      String NATURE_TIME = "1";
+      String RELATIVE_TIME = "2";
+      String CUSTOM_TIME = "3";
+   }
+}

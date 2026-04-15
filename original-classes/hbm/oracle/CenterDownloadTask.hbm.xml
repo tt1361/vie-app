@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.download">
+    <class name="CenterDownloadTask" table="center_download_task">
+        <id name="downloadID" type="int">
+            <column name="id">
+            </column>
+        </id>
+        <property name="downloadTemplate" type="text">
+            <column name="downloadTemplate" length="1000">
+            </column>
+        </property>
+        <property name="status" type="int">
+            <column name="status" default="0">
+            </column>
+        </property>
+        <property name="dubboUrl" type="string">
+            <column name="dubboUrl" length="200">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

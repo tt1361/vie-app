@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.datamining">
+    <class name="CallClusterTask"
+           table="CALLREASON_TOGETHER_TASK">
+
+        <id name="taskId" type="java.lang.Long">
+            <column name="TASK_ID">
+            </column>
+            <generator class="native"></generator>
+        </id>
+
+        <property name="taskStatus" type="java.lang.Integer">
+            <column name="TASK_STATUS"></column>
+        </property>
+
+        <property name="beginTime" type="java.lang.String">
+            <column name="BEGIN_DATE">
+            </column>
+        </property>
+        <property name="endTime" type="java.lang.String">
+            <column name="END_DATE">
+            </column>
+        </property>
+
+        <property name="dataAuth" type="java.lang.String">
+            <column name="DATA_AUTH"></column>
+        </property>
+
+        <property name="togetherId" type="java.lang.Long">
+            <column name="TOGATHER_ID"></column>
+        </property>
+
+        <property name="analyzeType" type="java.lang.Integer">
+            <column name="ANALYZE_TYPE"></column>
+        </property>
+        <property name="analyzeIds" type="java.lang.String">
+            <column name="ANALYZE_IDS">
+            </column>
+        </property>
+        <property name="dataType" type="java.lang.Integer">
+            <column name="DATA_TYPE"></column>
+        </property>
+        <property name="batchId" type="java.lang.String">
+            <column name="BATCH_ID">
+            </column>
+        </property>
+        <property name="ifLone" type="java.lang.Integer">
+            <column name="IF_LONE"></column>
+        </property>
+
+        <property name="updateTime" type="java.lang.String">
+            <column name="update_time"></column>
+        </property>
+
+    </class>
+
+</hibernate-mapping>

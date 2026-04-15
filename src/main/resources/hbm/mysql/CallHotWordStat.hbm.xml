@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.topic">
+    <class name="CallHotWordStat" table="CALL_HOTWORD_STAT">
+    	<id name="statId" type="java.lang.Long">
+    		<column name="stat_id"></column>
+    		<generator class="native"></generator>
+    	</id>
+    	
+        <property name="taskId" type="java.lang.Long">
+            <column name="task_id"></column>
+        </property>
+        <property name="keyword" type="java.lang.String">
+            <column name="keyword"></column>
+        </property>
+        <property name="statDate" type="java.lang.String">
+            <column name="statdate"></column>
+        </property>
+        <property name="kwCount" type="java.lang.Long">
+            <column name="kwcount"></column>
+        </property>
+        <property name="totalKwCount" type="java.lang.Long">
+            <column name="totalkwcount"></column>
+        </property>
+        <property name="kwPercent" type="java.lang.Float">
+            <column name="kwpercent"></column>
+        </property>
+        <property name="kwFileCount" type="java.lang.Long">
+            <column name="kwfilecount"></column>
+        </property>
+        <property name="totalFileKwCount" type="java.lang.Long">
+            <column name="totalfilekwcount"></column>
+        </property>
+        <property name="kwFilePercent" type="java.lang.Float">
+            <column name="kwfilepercent"></column>
+        </property>
+    </class>
+
+</hibernate-mapping>

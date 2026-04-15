@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+					    http://www.springframework.org/schema/aop
+	                    http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-4.0.xsd
+					    http://code.alibabatech.com/schema/dubbo
+					    http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<!-- <bean
+		class="com.iflytek.vie.utils.EncryptPropertyPlaceholderConfigurer">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="ignoreResourceNotFound" value="false" />
+		<property name="locations">
+			<list>
+				标准配置
+				<value>classpath*:config.properties</value>
+				<value>classpath*:jdbc.properties</value>
+				<value>classpath*:vie-service-common.properties</value>
+                </list>
+            </property>
+        </bean> -->
+
+        <bean name="excuteContext" class="com.iflytek.vie.utils.ExcuteContext" />
+
+        <bean name="dataSourceInfo" class="com.iflytek.vie.app.provider.common.DataSourceInfo">
+            <property name="dataSourceList">
+                <list>
+                    <map>
+                        <entry key="dateSource" value="pingan"/>
+                        <entry key="type" value="voice"/>
+                    </map>
+                    <map>
+                        <entry key="dateSource" value="jianhang"/>
+                        <entry key="type" value="voice"/>
+                    </map>
+                    <map>
+                        <entry key="dateSource" value="hbyd"/>
+                        <entry key="type" value="voice"/>
+                    </map>
+                    <map>
+                        <entry key="dateSource" value="mobile"/>
+                        <entry key="type" value="voice"/>
+                    </map>
+                    <map>
+                        <entry key="dateSource" value="pingantask"/>
+                        <entry key="type" value="task"/>
+                    </map>
+                </list>
+            </property>
+        </bean>
+
+        <!-- 因为CI打的包 ServiceCommonConstants与sparkUtils类加载顺序有问题，所以将ServiceCommonConstants初始化参数放在sparkUtils中初试化-->
+    <bean name="sparkUtils" class="com.iflytek.vie.utils.SparkUtils" init-method="init">
+    	<!-- <property name="sparkAppName" value="${spark.app.name}"/>
+		<property name="sparkUrl" value="${spark.url}"/>
+		<property name="esAddressMain" value="${es.address.main}"/>
+		<property name="anydrillAddressMain" value="${anydrill.address.main}"/>
+		<property name="esAddressModel" value="${es.address.model}"/>
+		<property name="anydrillAddressModel" value="${anydrill.address.model}"/>
+		<property name="modelLastName" value="${model.last.name}"/>
+		<property name="esQueryMode" value="${es.query.mode}"/>
+		<property name="sparkExecutorMemory" value="${spark.executor.memory}"/>
+		<property name="sparkCoresMax" value="${spark.cores.max}"/>
+		<property name="sparkDefaultParallelism" value="${spark.default.parallelism}"/>
+		<property name="insightType" value="${insight.type}"/>
+		<property name="sparkKryoserializerBufferMax" value="${spark.kryoserializer.buffer.max}"/>
+		<property name="sparkKryoserializerBuffer" value="${spark.kryoserializer.buffer}"/> -->
+	</bean>
+	
+	<dubbo:application name="vie-app-base-provider" logger="slf4j" />
+    <dubbo:registry protocol="zookeeper" address="${dubbo.registry.address}" register="${dubbo.registry.flag}" />
+    <dubbo:protocol name="${dubbo.portocol.name}" port="${dubbo.portocol.port}" />
+    <dubbo:protocol name="hessian" port="${hessian.portocol.port}" payload="209715200"/> 
+    <dubbo:provider filter="${argumentLogFilter}" protocol="dubbo" port="${dubbo.portocol.port}"/> 
+</beans>

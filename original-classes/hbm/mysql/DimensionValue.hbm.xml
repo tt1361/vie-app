@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.dimension">
+    <class name="DimensionValue"  table="DIMENSION_VALUE_MAP">
+        <id name="id" type="int">
+            <column name="ID">
+                <comment>id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="dimValue" type="string">
+            <column name="DIM_VALUE">
+            </column>
+        </property>
+        <property name="dimensionId" type="java.lang.Long">
+            <column name="DIMENSION_ID">
+            </column>
+        </property>
+        <property name="updateTime" type="java.util.Date">
+            <column name="UPDATETIME">
+            </column>
+        </property>
+
+    </class>
+
+</hibernate-mapping>

@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.provider.pojo">
+    <class name="TopicAllDimension" table="TOPIC_ALL_DIMENSION">
+        <id name="id" type="int">
+            <column name="id">
+                <comment>id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="dimensionJson" type="text">
+            <column name="dimension_Json">
+                <comment>专题条件</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

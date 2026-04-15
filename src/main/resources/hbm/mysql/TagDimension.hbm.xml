@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.model">
+    <class name="TagDimension" table="TAG_DIMENSION">
+        <id name="dimensionId" type="long">
+            <column name="dimension_id">
+                <comment>id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="dimensionCode" type="string">
+            <column name="dimension_code">
+                <comment>标签编码</comment>
+            </column>
+        </property>
+        <property name="dimensionName" type="string">
+            <column name="dimension_name">
+                <comment>标签名称</comment>
+            </column>
+        </property>
+        <property name="dimensionStatus" type="int">
+            <column name="dimension_status" default="0">
+                <comment>标签状态</comment>
+            </column>
+        </property>
+        <property name="dimensionType" type="int">
+            <column name="dimension_type" default="1">
+                <comment>按字或按词</comment>
+            </column>
+        </property>
+    </class>
+
+</hibernate-mapping>

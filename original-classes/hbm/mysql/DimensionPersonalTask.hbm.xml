@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.dimension">
+    <class name="DimensionPersonalTask" table="DIMENSION_PERSONAL_TASK">
+        <id name="id" type="long">
+            <column name="id">
+                <comment>ID</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="taskName" type="string">
+            <column name="task_name">
+                <comment>任务别名</comment>
+            </column>
+        </property>
+        <property name="condition" type="text">
+            <column name="condition">
+                <comment>处理后的条件</comment>
+            </column>
+        </property>
+        <property name="originalCondition" type="text">
+            <column name="original_condition">
+                <comment>原始条件</comment>
+            </column>
+        </property>
+        <property name="dimensionName" type="string">
+            <column name="dimension_name">
+                <comment>维度名称</comment>
+            </column>
+        </property>
+        <property name="dimensionAnotherName" type="string">
+            <column name="dimension_another_name">
+                <comment>维度别名</comment>
+            </column>
+        </property>
+        <property name="dimensionValueName" type="string">
+            <column name="dimension_value_name">
+                <comment>维度值名称</comment>
+            </column>
+        </property>
+        <property name="state" type="int">
+            <column name="state" default="0">
+                <comment>状态</comment>
+            </column>
+        </property>
+        <property name="message" type="text">
+            <column name="message">
+                <comment>日志</comment>
+            </column>
+        </property>
+        <property name="num" type="string">
+            <column name="num">
+                <comment>序号</comment>
+            </column>
+        </property>
+        <many-to-one name="dimensionTask" lazy="false"
+                     cascade="save-update,persist">
+            <column name="task_id">
+                <comment>维度ID</comment>
+            </column>
+        </many-to-one>
+    </class>
+
+</hibernate-mapping>

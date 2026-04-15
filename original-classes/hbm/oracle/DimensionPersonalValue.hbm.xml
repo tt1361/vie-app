@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.dimension">
+    <class name="DimensionPersonalValue" table="DIMENSION_PERSONAL_VALUE">
+        <id name="id" type="long">
+            <column name="id">
+                <comment>ID</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">
+                    DIMENSION_PERSONAL_VALUE_SEQ
+                </param>
+            </generator>
+        </id>
+        <property name="dimensionName" type="string">
+            <column name="dimension_name">
+                <comment>名称</comment>
+            </column>
+        </property>
+        <property name="dimensionColor" type="string">
+            <column name="dimension_color">
+                <comment>颜色</comment>
+            </column>
+        </property>
+
+        <property name="showIndex" type="int">
+            <column name="show_index" not-null="true">
+                <comment>展示顺序</comment>
+            </column>
+        </property>
+        <many-to-one name="dimensionPersonal" lazy="false"
+                     cascade="save-update,persist">
+            <column name="dimension_id">
+                <comment>维度ID</comment>
+            </column>
+        </many-to-one>
+
+    </class>
+
+</hibernate-mapping>

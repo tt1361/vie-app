@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.model">
+    <class name="ModelGroup" table="model_group">
+        <id name="groupId" type="long">
+            <column name="group_id" not-null="true"/>
+            <generator class="sequence">
+                <param name="sequence">
+                    GROUP_SEQ
+                </param>
+            </generator>
+        </id>
+        <property name="applicationId" type="long">
+            <column name="application_id" not-null="true">
+                <comment>应用id</comment>
+            </column>
+        </property>
+        <property name="groupName" type="string">
+            <column name="group_name" not-null="true">
+                <comment>模型组名称</comment>
+            </column>
+        </property>
+        <property name="isDisplay" type="int">
+            <column name="is_display" not-null="true" default="1">
+                <comment>是否显示（1显示，0隐藏）</comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description">
+                <comment>描述</comment>
+            </column>
+        </property>
+        <property name="deleted" type="int">
+            <column name="deleted" not-null="true" default="0">
+                <comment>是否删除（1删除，0不删除）</comment>
+            </column>
+        </property>
+        <property name="parentId" type="long">
+            <column name="parent_id" not-null="true" default="0">
+                <comment>父级ID</comment>
+            </column>
+        </property>
+        <property name="treeCodeIndex" type="int">
+            <column name="tree_code_num" not-null="true" default="1">
+                <comment>当前是第几层</comment>
+            </column>
+        </property>
+        <property name="isTopic" type="int">
+            <column name="is_topic" not-null="true" default="0">
+                <comment>是否为专题下的模型组</comment>
+            </column>
+        </property>
+        <property name="dataSource" type="string">
+            <column name="DATASOURCE" not-null="true">
+                <comment>数据源</comment>
+            </column>
+        </property>
+        <set name="modelInfoSet" lazy="false">
+            <key>
+                <column name="group_id">
+                    <comment>模型组id</comment>
+                </column>
+            </key>
+            <one-to-many class="ModelInfo"/>
+        </set>
+
+        <!--<set name="modelInfos" lazy="false">-->
+        <!--<key>-->
+        <!--<column name="group_id">-->
+        <!--<comment>模型组id</comment>-->
+        <!--</column>-->
+        <!--</key>-->
+        <!--<one-to-many class="ModelInfo"/>-->
+        <!--</set>-->
+
+    </class>
+
+    <query name="FindModelGroupByApplicationId">
+        select mg from ModelGroup mg where mg.applicationId=? and mg.deleted=0 and mg.groupId=?
+    </query>
+
+    <query name="FindCount">
+        select count(mg.groupId) from ModelGroup mg where mg.applicationId=? and mg.deleted=0
+    </query>
+
+    <!-- 根据模型组名称模糊查询-->
+    <query name="FindModelGroupLikeName">
+        select mg.groupId,mg.groupName,mg.isDisplay,mg.description,mg.deleted,mg.applicationId from ModelGroup mg where mg.groupName like ? and mg.deleted=0
+    </query>
+
+    <query name="FindModelGroupById">
+        select mg from ModelGroup mg where mg.groupId=? and mg.isDisplay=1 and mg.deleted=0
+    </query>
+
+    <!-- 判断某个应用下模型组名称是否存在-->
+    <query name="FindModelGroupByName">
+        select mg from ModelGroup mg where mg.groupName =? and (mg.applicationId =? or mg.applicationId=-1) and mg.deleted=0
+    </query>
+
+    <query name="FindModelGroupByNameAndId">
+        select mg from ModelGroup mg where mg.groupName =? and (mg.applicationId =? or mg.applicationId=-1) and mg.deleted=0 and mg.groupId!=?
+    </query>
+
+    <query name="FindDefaultModelGroup">
+        select mg from ModelGroup mg where mg.applicationId=-1 and mg.deleted=0
+    </query>
+
+
+</hibernate-mapping>

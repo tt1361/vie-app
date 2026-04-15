@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.model">
+    <class name="ModelFragment" table="MODEL_DETAIL" >
+        <id name="fragmentId" type="long">
+            <column name="fragment_id">
+                <comment>子模型的Id，亦是主键Id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="modelId" type="long">
+            <column name="model_id">
+                <comment>模型Id</comment>
+            </column>
+        </property>
+        <property name="previewId" type="long">
+            <column name="preview_id">
+                <comment>每一次进入页面的ID</comment>
+            </column>
+        </property>
+        <property name="fragmentContent" type="text">
+            <column name="text_rule">
+                <comment>规则</comment>
+            </column>
+        </property>
+        <property name="ruleType" type="int" length="1">
+            <column name="rule_type">
+                <comment>规则类型,0文本,1过滤,2组合</comment>
+            </column>
+        </property>
+        <property name="createTime" type="string">
+            <column name="create_time">
+                <comment>创建时间</comment>
+            </column>
+        </property>
+        <property name="fragmentNum" type="int">
+            <column name="fragment_num">
+                <comment>片段编号</comment>
+            </column>
+        </property>
+        <property name="createTimestamp" type="long">
+            <column name="create_timestamp">
+                <comment>创建时间</comment>
+            </column>
+        </property>
+        <property name="channel" type="int">
+            <column name="channel" default="2">
+                <comment>声道</comment>
+            </column>
+        </property>
+
+        <property name="isTag" type="int">
+            <column name="is_tag" default="0">
+                <comment>是否是标签</comment>
+            </column>
+        </property>
+        <property name="tagContent" type="text">
+            <column name="tag_content">
+                <comment>标签内容</comment>
+            </column>
+        </property>
+        <property name="remark" type="string">
+            <column name="remark">
+                <comment>备注</comment>
+            </column>
+        </property>
+        <property name="tagText" type="text">
+            <column name="tag_text">
+                <comment>片段描述內容</comment>
+            </column>
+        </property>
+        <property name="tagVersion" type="text">
+            <column name="tag_version">
+
+            </column>
+        </property>
+
+    </class>
+    <query name="queryAllFragmentId">
+        SELECT t.fragmentId FROM ModelFragment t WHERE t.modelId=?
+    </query>
+    <query name="queryAllFragment">
+        SELECT t FROM ModelFragment t WHERE t.modelId=? order by t.fragmentId
+    </query>
+</hibernate-mapping>

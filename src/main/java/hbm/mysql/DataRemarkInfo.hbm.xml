@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.model">
+    <class name="DataRemarkInfo" table="DATA_REMARK_INFO" >
+        <id name="id" type="long">
+            <column name="id">
+                <comment>主键Id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="remark" type="string" >
+            <column name="remark">
+                <comment>备注</comment>
+            </column>
+        </property>
+        <property name="telId" type="string">
+            <column name="tel_id">
+                <comment>每一条录音的ID</comment>
+            </column>
+        </property>
+        <property name="fragmentId" type="long">
+            <column name="fragment_id">
+                <comment>片段ID</comment>
+            </column>
+        </property>
+    </class>
+
+    <query name="queryAllDataRemarks">
+        FROM DataRemarkInfo t WHERE t.fragmentId=?
+    </query>
+    <query name="queryDataRemarkByTelId">
+        FROM DataRemarkInfo t WHERE t.fragmentId=? AND t.telId=?
+    </query>
+</hibernate-mapping>

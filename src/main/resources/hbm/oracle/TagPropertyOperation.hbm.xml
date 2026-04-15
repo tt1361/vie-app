@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.model">
+    <class name="TagPropertyOperation" table="tag_property_operation">
+        <id name="operationId" type="long">
+            <column name="operation_id">
+                <comment>id</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">
+                    tag_property_operation_seq
+                </param>
+            </generator>
+
+        </id>
+        <property name="operationCode" type="string">
+            <column name="operation_code">
+                <comment>操作编码</comment>
+            </column>
+        </property>
+        <property name="operationName" type="string">
+            <column name="operation_name">
+                <comment>操作名称</comment>
+            </column>
+        </property>
+        <property name="operationStatus" type="int">
+            <column name="operation_status" default="0">
+                <comment>状态</comment>
+            </column>
+        </property>
+        <property name="type" type="int">
+            <column name="type" default="0">
+                <comment>0运算符，1值</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

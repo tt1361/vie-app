@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.report">
+    <class name="ReportGroup" table="report_group">
+        <id name="id" type="int">
+            <column name="id">
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="name" type="string">
+            <column name="name" not-null="true" length="64">
+            </column>
+        </property>
+        <property name="createUser" type="string">
+            <column name="createUser" not-null="true" length="64">
+            </column>
+        </property>
+        <property name="isEdit" type="int">
+            <column name="isEdit">
+            </column>
+        </property>
+        <property name="roleId" type="long">
+        	<column name="role_id"/>
+        </property>
+        <set name="reportSet" table="report_relation" lazy="true">
+            <key>
+                <column name="reportGroupID">
+                </column>
+            </key>
+            <many-to-many class="ReportConfig">
+                <column name="reportID">
+                </column>
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

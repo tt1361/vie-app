@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.dimension">
+    <class name="HotWordStat" table="HotWordStat">
+        <composite-id>
+            <key-property name="keyWord" type="java.lang.String">
+                <column name="keyWord"  >
+                </column>
+            </key-property>
+            <key-property name="statDate" type="java.lang.String">
+                <column name="statDate">
+                </column>
+            </key-property>
+            <key-property name="centerValue" type="java.lang.String">
+                <column name="centerValue">
+                </column>
+            </key-property>
+            <key-property name="batchId" type="java.lang.String">
+                <column name="batch_id"></column>
+            </key-property>
+            <key-property name="ifLone" type="java.lang.Integer">
+                <column name="if_lone"></column>
+            </key-property>
+        </composite-id>
+        <property name="kwCount" type="int">
+            <column name="kwCount">
+            </column>
+        </property>
+        <property name="kwFileCount" type="int">
+            <column name="kwFileCount">
+            </column>
+        </property>
+        <property name="totalKwCount" type="int">
+            <column name="totalKwCount">
+            </column>
+        </property>
+        <property name="totalFileKwCount" type="int">
+            <column name="totalFileKwCount">
+            </column>
+        </property>
+        <property name="kwPercent" type="double">
+            <column name="kwPercent">
+            </column>
+        </property>
+        <property name="kwFilePercent" type="double">
+            <column name="kwFilePercent">
+            </column>
+        </property>
+        <property name="dataType" type="java.lang.Integer">
+            <column name="data_type"></column>
+        </property>
+    </class>
+
+</hibernate-mapping>

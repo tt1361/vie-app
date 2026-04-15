@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Spring-Boot-Classes: BOOT-INF/classes/
+Implementation-Title: vie-app-base-provider
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: cis
+Start-Class: com.iflytek.vie.app.provider.App
+Created-By: Apache Maven 3.3.9
+Implementation-URL: http://maven.apache.org
+Implementation-Vendor: Pivotal Software, Inc.
+Implementation-Vendor-Id: com.iflytek.vie
+Build-Jdk: 1.7.0_55
+Spring-Boot-Lib: BOOT-INF/lib/
+Spring-Boot-Version: 1.5.8.RELEASE
+Main-Class: org.springframework.boot.loader.JarLauncher
+Archiver-Version: Plexus Archiver
+

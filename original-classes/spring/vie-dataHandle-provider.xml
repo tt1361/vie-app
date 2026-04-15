@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+  
+	<bean name="taskFileHandleDB" class="com.iflytek.vie.app.provider.database.TaskFileHandleDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>
+	</bean>
+	<bean name="dataHandleStatusService" class="com.iflytek.vie.app.provider.impl.datahandle.DataHandleStatusServiceImpl">
+		<property name="taskFileHandleDB" ref="taskFileHandleDB"/>
+		<property name="excuteContext" ref="excuteContext"></property>
+        <property name="dataSourceInfo" ref="dataSourceInfo"></property>
+        
+	</bean>
+	
+    <dubbo:service interface="com.iflytek.vie.app.api.datahandle.DataHandleStatusService"
+                   ref="dataHandleStatusService" version="1.0" timeout="3000" retries="0" delay="-1"/>
+</beans>

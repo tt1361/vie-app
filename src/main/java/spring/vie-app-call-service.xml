@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.0.xsd ">
+
+	<bean id="callFilterService" class="com.iflytek.vie.app.provider.impl.call.CallFilterServiceImpl">
+		<property name="callFilterDB" ref="callFilterDB"/>
+		<property name="dimensionService" ref="dimensionService"/>
+		<property name="modelApplyService" ref="ModelApply"/>
+		<property name="dataSourceInfo" ref="dataSourceInfo"/>
+		<!-- <property name="columnsFilePath" value="${columns.file.location}"></property> -->
+		<!-- 列表类型默认维度配置：1.通话列表 2.违规语音列表 3.质量管控钻取通话列表 4.业务运营里数字钻取通话列表  5.专题匹配通话 6.模型匹配通话 -->
+		<property name="listType">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="1" value="id,duration,vadDuration,silenceLong"/>
+                <entry key="2" value="id,duration,vadDuration,silenceLong"/>
+                <entry key="3" value="id,duration,vadDuration,silenceLong"/>
+                <entry key="4" value="id,duration,vadDuration,silenceLong"/>
+                <entry key="5" value="id,duration,vadDuration"/>
+                <entry key="6" value="id,duration"/>
+            </map>
+        </property>
+	</bean>
+
+</beans>

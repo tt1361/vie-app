@@ -1,0 +1,229 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.model">
+    <class name="ModelInfo" table="MODEL_INFO">
+        <id name="modelId" type="long">
+            <column name="model_id">
+                <comment>id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="modelName" type="string">
+            <column name="model_name">
+                <comment>模型名称</comment>
+            </column>
+        </property>
+        <property name="modelComment" type="string">
+            <column name="model_comment">
+                <comment>模型备注</comment>
+            </column>
+        </property>
+        <property name="modelType" type="int">
+            <column name="model_type">
+                <comment>模型类型,0实时1离线</comment>
+            </column>
+        </property>
+
+        <property name="dataSource" type="string">
+            <column name="dataSource">
+                <comment>数据源</comment>
+            </column>
+        </property>
+        <property name="textRule" type="text">
+            <column name="text_rule">
+                <comment>文本规则</comment>
+            </column>
+        </property>
+        <property name="tagRule" type="string">
+            <column name="tag_rule">
+                <comment>标签规则</comment>
+            </column>
+        </property>
+        <property name="silenceRule" type="string">
+            <column name="silence_rule">
+                <comment>静音规则</comment>
+            </column>
+        </property>
+        <property name="silenceText" type="string">
+            <column name="silence_text">
+                <comment>解析静音规则</comment>
+            </column>
+        </property>
+        <property name="modelStatus" type="int">
+            <column name="model_status">
+                <comment>模型状态模型，状态0启用1停用2删除</comment>
+            </column>
+        </property>
+        <property name="userId" type="long">
+            <column name="user_id">
+                <comment>创建者Id</comment>
+            </column>
+        </property>
+        <property name="filterId" type="java.lang.Integer">
+            <column name="filter_id" default="0">
+                <comment>引用的筛选器Id</comment>
+            </column>
+        </property>
+        <property name="userName" type="string">
+            <column name="user_name">
+                <comment>创建者用户名</comment>
+            </column>
+        </property>
+        <property name="modifierId" type="long">
+            <column name="modifier_id">
+                <comment>更新者Id</comment>
+            </column>
+        </property>
+        <property name="createTime" type="string">
+            <column name="create_time">
+                <comment>创建时间</comment>
+            </column>
+        </property>
+        <property name="updateTime" type="string">
+            <column name="update_time">
+                <comment>更新时间</comment>
+            </column>
+        </property>
+        <property name="ruleTree" type="string">
+            <column name="rule_tree">
+                <comment>图形化建模</comment>
+            </column>
+        </property>
+        <property name="channel" type="int" length="1">
+            <column name="channel">
+                <comment>声道0表示坐席，1表示客户2表示全部</comment>
+            </column>
+        </property>
+        <property name="isOnline" type="int">
+            <column name="is_online">
+                <comment>是否上线过</comment>
+            </column>
+        </property>
+        <property name="oldId" type="long">
+            <column name="old_id">
+                <comment>更新者Id</comment>
+            </column>
+        </property>
+        <property name="filterRule" type="text">
+            <column name="filter_rule">
+                <comment>筛选条件Id</comment>
+            </column>
+        </property>
+        <property name="modelAccuracy" type="java.lang.Float">
+            <column name="model_accuracy" not-null="true" default="0.00">
+                <comment>模型准确度</comment>
+            </column>
+        </property>
+        <property name="modelNum" type="string">
+            <column name="model_number">
+                <comment>模型编号</comment>
+            </column>
+        </property>
+        <property name="hasChange" type="int" length="1">
+            <column name="is_change">
+                <comment>是否被修改过</comment>
+            </column>
+        </property>
+        <property name="inputRule" type="text">
+            <column name="input_rule">
+                <comment>页面上规则的组合</comment>
+            </column>
+        </property>
+        <property name="extend1" type="string">
+            <column name="extend1">
+                <comment>扩展字段1</comment>
+            </column>
+        </property>
+        <property name="extend2" type="string">
+            <column name="extend2">
+                <comment>扩展字段2</comment>
+            </column>
+        </property>
+        <property name="extend3" type="string">
+            <column name="extend3">
+                <comment>扩展字段3</comment>
+            </column>
+        </property>
+        <property name="modifierName" type="string">
+            <column name="modifier_name">
+                <comment>更新者用户名</comment>
+            </column>
+        </property>
+        <property name="pageType" type="java.lang.Integer">
+            <column name="page_type">
+                <comment>操作页面标示</comment>
+            </column>
+        </property>
+        <property name="modelUptonow" type="java.lang.Integer">
+            <column name="model_uptonow" not-null="true" default="0">
+                <comment>模型至今</comment>
+            </column>
+        </property>
+        <property name="modelCondition" type="text">
+            <column name="model_condition">
+                <comment>模型上线条件</comment>
+            </column>
+        </property>
+        <property name="modelHitCount" type="string">
+            <column name="model_hitcount">
+                <comment>模型命中数</comment>
+            </column>
+        </property>
+        <property name="isPass" type="int">
+            <column name="is_pass" not-null="true" default="0">
+                <comment>是否推送质检，1推送，0不推送</comment>
+            </column>
+        </property>
+        <property name="isUp" type="int">
+            <column name="is_up" not-null="true" default="0">
+                <comment>是否置顶，1置顶，0没指定</comment>
+            </column>
+        </property>
+        <property name="totalCount" type="string">
+            <column name="total_count">
+                <comment>数据源下的总数</comment>
+            </column>
+        </property>
+        <property name="dataLimit" type="text">
+            <column name="DATA_LIMIT">
+                <comment>数据权限</comment>
+            </column>
+        </property>
+        <many-to-one name="modelGroup" lazy="false"
+                     cascade="save-update,persist">
+            <column name="group_id">
+                <comment>模型组</comment>
+            </column>
+        </many-to-one>
+
+    </class>
+    <query name="QueryAllModelsByDataSource">
+        from ModelInfo t where t.dataSource=? and t.modelStatus!=2
+    </query>
+
+    <query name="QueryAllModelCount">
+        SELECT COUNT(mi.modelId)
+        FROM ModelInfo mi WHERE
+        mi.modelStatus!=2 AND mi.modelName LIKE ?
+        ORDER BY mi.updateTime desc
+    </query>
+
+    <query name="QueryModelByIdPlatform">
+        FROM ModelInfo t WHERE t.modelId=? and t.modelStatus != 2
+    </query>
+
+    <query name="QueryModelById">
+        FROM ModelInfo t WHERE t.modelId=?
+    </query>
+
+    <query name="QueryModelByModelName">
+        FROM ModelInfo t WHERE t.modelGroup.groupId=? and t.modelName=? and t.modelStatus!=2
+    </query>
+    <query name="QueryModelByDataSource">
+        SELECT t.modelId,t.modelName,t.modelType,t.modelGroup.groupName FROM ModelInfo t WHERE t.dataSource=?
+        AND t.modelStatus!=2
+    </query>
+
+</hibernate-mapping>

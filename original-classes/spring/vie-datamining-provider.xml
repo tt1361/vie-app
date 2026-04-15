@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+	<bean name="dayClusterDB" class="com.iflytek.vie.app.provider.database.DayClusterDB"  >
+		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
+
+	</bean>
+    <bean name="callClusterDB" class="com.iflytek.vie.app.provider.database.CallClusterDB"  >
+        <property name="hibernateTemplate" ref="hibernateTemplate"></property>
+
+    </bean>
+    <bean name="callClusterService" class="com.iflytek.vie.app.provider.impl.datamining.CallClusterServiceImpl">
+        <property name="commonData" ref="commonDataPlatform"/>
+        <property name="callClusterDB" ref="callClusterDB"/>
+    </bean>
+
+	<bean name="getClusterData" class="com.iflytek.vie.app.provider.impl.datamining.ClusterServiceImpl">
+		<property name="dayClusterDB" ref="dayClusterDB" />
+        <property name="dataAuthService" ref="dataAuthService"/>
+	</bean>
+
+
+    <dubbo:service interface="com.iflytek.vie.app.api.datamining.ClusterService"
+                   ref="getClusterData" version="1.0" timeout="3000" retries="0" delay="-1"/>
+
+    <dubbo:service interface="com.iflytek.vie.app.api.datamining.CallClusterService"
+                   ref="callClusterService" version="1.0" timeout="3000" retries="0" delay="-1"/>
+</beans>

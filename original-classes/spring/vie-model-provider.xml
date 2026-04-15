@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+	<bean name="modelDBPlatform" class="com.iflytek.vie.app.provider.database.ModelDBPlatform" >
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	  
+	</bean>
+	 
+	<bean name="fragmentDB" class="com.iflytek.vie.app.provider.database.ModelFragmentDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	  
+	</bean>
+	<bean name="modelGroupDBPlatform" class="com.iflytek.vie.app.provider.database.ModelGroupDBPlatform">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>
+		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+	</bean>
+<!--	<bean name="dataMarkInfoDBPlatform" class="com.iflytek.vie.app.provider.database.DataMarkInfoDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	  
+	</bean>-->
+<!--	<bean name="dataRemarkInfoDBPlatform" class="com.iflytek.vie.app.provider.database.DataRemarkInfoDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	  
+	</bean>	-->
+	<bean name="taskInfoDB" class="com.iflytek.vie.app.provider.database.TaskInfoDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	  
+	</bean>
+	<bean name="modelTaskDB" class="com.iflytek.vie.app.provider.database.ModelTaskDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>	  
+	</bean>
+	<bean name="modelTagDB" class="com.iflytek.vie.app.provider.database.ModelTagDB">
+		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
+		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+	</bean>
+
+	<bean name="collectTaskDB" class="com.iflytek.vie.app.provider.database.DataCollectTaskDB">
+		<property name="hibernateTemplate" ref="hibernateTemplate"></property>
+	</bean>
+
+<!--
+	<bean name="batchInfoDBPlatform" class="com.iflytek.vie.app.provider.database.BatchDB">
+		<property name="hiberTemp" ref="hibernateTemplate"></property>
+	</bean>
+-->
+
+	<bean name="modelService" class="com.iflytek.vie.app.provider.impl.model.ModelServiceImpl">
+		<property name="modelDB" ref="modelDBPlatform"/>
+		<property name="fragmentDB" ref="fragmentDB"/>
+		<property name="modelGroupDB" ref="modelGroupDBPlatform"/>
+		<property name="dataMarkInfoDB" ref="dataMarkInfoDB"/>
+		<property name="dataRemarkInfoDB" ref="dataRemarkInfoDB"/>
+		<property name="taskInfoDB" ref="taskInfoDB"/>
+		<property name="modelTaskDB" ref="modelTaskDB"/>
+		<!--<property name="dataTypeDimension" value="${dataTypeDimension}"/>-->
+		<property name="excuteContext" ref="excuteContext"/>
+		<property name="groupAuthService" ref="groupAuthService"/>
+		<property name="userService" ref="userService"/>
+		<property name="commonData" ref="commonDataPlatform"/>
+		<property name="dataSourceInfo" ref="dataSourceInfo"/>
+		<property name="modelTagDB" ref="modelTagDB"/>
+		<property name="collectTaskDB" ref="collectTaskDB"/>
+		<property name="dimensionDB" ref="dimensionDBPlatform"/>
+		<property name="batchInfoDB" ref="batchDB"/>
+		<property name="filterAnaylseService" ref="filterAnaylseService"/>
+		<property name="filterInfoDB" ref="filterInfoDB"/>
+	</bean>
+
+	<bean name="silenceCache" class="com.iflytek.vie.app.provider.ruleparse.SilenceTagsCache" scope="singleton"
+		  init-method="init">
+		<property name="modelTagDB" ref="modelTagDB"/>
+	</bean>
+
+	<bean name="modelGroupService" class="com.iflytek.vie.app.provider.impl.model.ModelGroupServiceImpl">
+		<!--<property name="dataTypeDimension" value="${dataTypeDimension}"/>-->
+		<property name="modelGroupDB" ref="modelGroupDBPlatform"/>
+		<property name="modelDB" ref="modelDBPlatform"/>
+		<property name="commonData" ref="commonDataPlatform"/>
+		<property name="excuteContext" ref="excuteContext"/>
+		<property name="dataSourceInfo" ref="dataSourceInfo"/>
+		<property name="groupAuthService" ref="groupAuthService"/>
+	</bean>
+	<bean name="configAction" class="com.iflytek.vie.app.provider.ruleparse.ConfigAction" scope="singleton" init-method="init">
+		<property name="fragmentPoolSize" value="15"></property>
+		<property name="fragmentQueneSize" value="100000"></property>
+	</bean>
+	<bean name="modelFragmentService" class="com.iflytek.vie.app.provider.impl.model.ModelFragmentServiceImpl">
+		<property name="fragmentDB" ref="fragmentDB"/>
+	</bean>
+	
+	<dubbo:service interface="com.iflytek.vie.app.api.model.ModelService"
+                   ref="modelService" version="1.0" timeout="1800000" retries="0" delay="-1"/>
+    <dubbo:service interface="com.iflytek.vie.app.api.model.ModelGroupService"
+                   ref="modelGroupService" version="1.0" timeout="30000" retries="0" delay="-1"/>
+    <dubbo:service interface="com.iflytek.vie.app.api.model.ModelFragmentService"
+                   ref="modelFragmentService" version="1.0" timeout="30000" retries="0" delay="-1"/>
+	
+</beans>

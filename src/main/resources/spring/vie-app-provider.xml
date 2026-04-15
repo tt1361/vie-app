@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<dubbo:service interface="com.iflytek.vie.app.api.config.ModelCategoryService"
+		ref="modelCategoryService" version="1.0" timeout="3000" retries="0"
+		delay="-1" />
+                 
+    <dubbo:service interface="com.iflytek.vie.app.api.topic.TopicHotWordTaskService" 
+    			ref="topicHotWordTaskService" version="1.0" timeout="30000" retries="0" delay="-1"/>
+    
+    <dubbo:service interface="com.iflytek.vie.app.api.topic.FunnelService" 
+    			ref="funnelService" version="1.0" timeout="30000" retries="0" delay="-1"/>
+                               
+	<dubbo:service interface="com.iflytek.vie.app.api.model.ModelApplyService"
+		ref="ModelApply" version="1.0" timeout="3000" retries="0" delay="-1" />
+
+	<dubbo:service interface="com.iflytek.vie.app.api.model.ModelAccuracyService"
+		ref="modelAccuracyService" version="1.0" timeout="1800000" retries="0"
+		delay="-1" />
+
+	<dubbo:service interface="com.iflytek.vie.app.api.dataquery.DataQueryService"
+		ref="dataQueryServiceImpl" version="1.0" timeout="5000" retries="0"
+		delay="-1" />
+
+	<dubbo:service interface="com.iflytek.vie.app.api.custom.CustomHomePageService"
+		ref="customHomePageService" version="1.0" timeout="5000" retries="0"
+		delay="-1" />
+
+	<dubbo:service interface="com.iflytek.vie.app.api.topicgroup.TopicGroupService"
+		ref="topicGroupService" version="1.0" timeout="600000" retries="0"
+		delay="-1" />
+
+	<dubbo:service interface="com.iflytek.vie.app.api.report.ReportGroupService"
+		ref="reportGroupService" version="1.0" timeout="30000" retries="0"
+		delay="-1" />
+
+	<dubbo:service interface="com.iflytek.vie.app.api.report.ReportDownloadService"
+		ref="reportDownloadService" version="1.0" timeout="30000" retries="0"
+		delay="-1" />
+		
+	<dubbo:service interface="com.iflytek.vie.app.api.dataSource.DataSourceService"
+		ref="dataSourceService" version="1.0" timeout="30000" retries="0"
+		delay="-1" />
+
+	<dubbo:service interface="com.iflytek.vie.app.api.report.ReportService"
+		ref="reportService" version="1.0" timeout="30000" retries="0" delay="-1" />
+
+	<dubbo:service interface="com.iflytek.vie.app.api.report.ReportChartViewService"
+		ref="reportChartViewService" version="1.0" timeout="300000" retries="0"
+		delay="-1" />
+	<dubbo:service interface="com.iflytek.vie.app.api.topic.TopicService"
+		ref="topicService" version="1.0" timeout="300000" retries="0" delay="-1" />
+		
+	<dubbo:service interface="com.iflytek.vie.app.api.batch.BatchService"
+		ref="batchService" version="1.0" timeout="30000" retries="0" delay="-1" />
+		
+	<dubbo:service interface="com.iflytek.vie.app.api.serial.SerialService"
+		ref="serialService" version="1.0" timeout="30000" retries="0" delay="-1" />
+		
+	<dubbo:service interface="com.iflytek.vie.app.api.call.CallFilterService"
+		ref="callFilterService" version="1.0" timeout="30000" retries="0" delay="-1" />
+
+	<dubbo:service interface="com.iflytek.vie.app.api.export.ExportInfoService"
+				   ref="exportInfoService" version="1.0" timeout="30000" retries="0" delay="-1" />
+	
+	<dubbo:service interface="com.iflytek.vie.app.api.search.SearchService"
+                   ref="searchService" version="1.0" timeout="300000" retries="0" delay="-1"  protocol="hessian" />
+
+	<dubbo:service interface="com.iflytek.vie.app.api.permission.UserService"
+		version="1.0" timeout="3000" retries="0" delay="-1" ref="userService"/>
+		
+	<dubbo:service interface="com.iflytek.vie.app.api.permission.GroupAuthService"
+		version="1.0" timeout="3000" retries="0" delay="-1" ref="groupAuthService"/>
+		
+	<dubbo:service interface="com.iflytek.vie.app.api.permission.FunctionAuthService"
+		version="1.0" timeout="3000" retries="0" delay="-1" ref="functionAuthService"/>
+		
+	<dubbo:service interface="com.iflytek.vie.app.api.permission.DataAuthService"
+		version="1.0" timeout="3000" retries="0" delay="-1" ref="dataAuthService"/>
+	
+	<dubbo:service interface="com.iflytek.vie.app.api.permission.LogService"
+		version="1.0" timeout="3000" retries="0" delay="-1" ref="logService"/>
+	
+	<dubbo:service interface="com.iflytek.vie.app.api.permission.SystemService"
+		version="1.0" timeout="3000" retries="0" delay="-1" ref="systemService"/>
+		
+	<dubbo:service interface="com.iflytek.vie.app.api.permission.OrganizationService"
+		version="1.0" timeout="30000" retries="0" delay="-1" ref="organizationService"/>
+		
+    <dubbo:service interface="com.iflytek.vie.app.api.topic.TopicExportService"
+		version="1.0" timeout="30000" retries="0" delay="-1" ref="topicExportService"/>
+	<dubbo:service interface="com.iflytek.vie.app.api.filter.FilterService"
+				   version="1.0" timeout="3000" retries="0" delay="-1" ref="filterService"/>
+	<dubbo:service interface="com.iflytek.vie.app.api.esdata.EsDataService"
+				   ref="esDataService" version="1.0" timeout="300000" retries="0" delay="-1"/>
+</beans>

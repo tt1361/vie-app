@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.filter">
+    <class name="FilterConfig" table="FILTER_CONFIG" >
+        <id name="filterConfigId" type="long">
+            <column name="FILTER_CONFIG_ID">
+                <comment>id</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">
+                    FILTER_CONFIG_SEQ
+                </param>
+            </generator>
+        </id>
+        <property name="showType" type="string">
+            <column name="SHOW_TYPE">
+                <comment>类型</comment>
+            </column>
+        </property>
+        <property name="showName" type="string">
+            <column name="SHOW_NAME ">
+                <comment>名称</comment>
+            </column>
+        </property>
+        <property name="showValue" type="string">
+            <column name="SHOW_VALUE" >
+                <comment>值</comment>
+            </column>
+        </property>
+        <property name="dataType" type="text">
+            <column name="DATA_TYPE">
+                <comment>数据类型</comment>
+            </column>
+        </property>
+        <property name="extend1" type="string">
+            <column name="EXTEND1">
+                <comment>扩展字段1</comment>
+            </column>
+        </property>
+        <property name="extend2" type="string">
+            <column name="EXTEND2">
+                <comment>扩展字段2</comment>
+            </column>
+        </property>
+        <property name="extend3" type="string">
+            <column name="EXTEND3">
+                <comment>扩展字段3</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

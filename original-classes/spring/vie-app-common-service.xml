@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <bean id="commonData" class="com.iflytek.vie.app.provider.common.CommonData">
+        <property name="dataAuthService" ref="dataAuthService"/>
+        <property name="dimensionService" ref="dimensionService"/>
+        <property name="groupAuthService" ref="groupAuthService"/>
+        <property name="modelDB" ref="modelDB"/>
+        <property name="dataSourceInfo" ref="dataSourceInfo"/>
+        <property name="measureList">
+            <list>
+                <map>
+                    <entry key="measure" value="idCounter_sum"/>
+                    <entry key="measureName" value="呼叫量"/>
+                    <entry key="expressionParam" value="A"/>
+                    <entry key="durationFlag" value="0"/>
+                </map>
+                <map>
+                    <entry key="measure" value="repeatCall_sum"/>
+                    <entry key="measureName" value="重复呼叫量"/>
+                    <entry key="expressionParam" value="B"/>
+                    <entry key="durationFlag" value="0"/>
+                </map>
+                <map>
+                    <entry key="measure" value="duration_sum"/>
+                    <entry key="measureName" value="通话时长_求和"/>
+                    <entry key="expressionParam" value="C1"/>
+                    <entry key="durationFlag" value="1"/>
+                </map>
+                <map>
+                    <entry key="measure" value="duration_avg" />
+                    <entry key="measureName" value="平均通话时长"/>
+                    <entry key="expressionParam" value="C2"/>
+                     <entry key="durationFlag" value="1"/>
+                </map>
+                <map>
+                    <entry key="measure" value="duration_max"/>
+                    <entry key="measureName" value="通话时长_最大值"/>
+                    <entry key="expressionParam" value="C3"/>
+                    <entry key="durationFlag" value="1"/>
+                </map>
+                <map>
+                    <entry key="measure" value="duration_min"/>
+                    <entry key="measureName" value="通话时长_最小值"/>
+                    <entry key="expressionParam" value="C4"/>
+                    <entry key="durationFlag" value="1"/>
+                </map>
+                <map>
+                    <entry key="measure" value="inVadDuration_sum"/>
+                    <entry key="measureName" value="无效通话时长_求和"/>
+                    <entry key="expressionParam" value="E1"/>
+                    <entry key="durationFlag" value="1"/>
+                </map>
+                <map>
+                    <entry key="measure" value="inVadDuration_avg"/>
+                    <entry key="measureName" value="平均无效通话时长"/>
+                    <entry key="expressionParam" value="E2"/>
+                    <entry key="durationFlag" value="1"/>
+                </map>
+                <map>
+                    <entry key="measure" value="inVadDuration_max"/>
+                    <entry key="measureName" value="无效通话时长_最大值"/>
+                    <entry key="expressionParam" value="E3"/>
+                    <entry key="durationFlag" value="1"/>
+                </map>
+                <map>
+                    <entry key="measure" value="inVadDuration_min"/>
+                    <entry key="measureName" value="无效通话时长_最小值"/>
+                    <entry key="expressionParam" value="E4"/>
+                    <entry key="durationFlag" value="1"/>
+                </map>
+                <map>
+                    <entry key="measure" value="silenceLong_sum"/>
+                    <entry key="measureName" value="静音时长_求和"/>
+                    <entry key="expressionParam" value="F1"/>
+                    <entry key="durationFlag" value="1"/>
+                </map>
+                <map>
+                    <entry key="measure" value="silenceLong_avg"/>
+                    <entry key="measureName" value="静音时长_平均值"/>
+                    <entry key="expressionParam" value="F2"/>
+                    <entry key="durationFlag" value="1"/>
+                </map>
+                <map>
+                    <entry key="measure" value="silenceLong_max"/>
+                    <entry key="measureName" value="静音时长_最大值"/>
+                    <entry key="expressionParam" value="F3"/>
+                    <entry key="durationFlag" value="1"/>
+                </map>
+                <map>
+                    <entry key="measure" value="silenceLong_min"/>
+                    <entry key="measureName" value="静音时长_最小值"/>
+                    <entry key="expressionParam" value="F4"/>
+                    <entry key="durationFlag" value="1"/>
+                </map>
+            </list>
+        </property>
+    </bean>
+</beans>

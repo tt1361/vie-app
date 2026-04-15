@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.topic">
+    <class name="TopicSelectDimension" table="TOPIC_SELECT_DIMENSION">
+        <id name="id" type="int">
+            <column name="id">
+                <comment>id</comment>
+            </column>
+            <generator class="native"></generator>
+        </id>
+        <property name="modelIds" type="text">
+            <column name="model_ids">
+                <comment>模型id集合</comment>
+            </column>
+        </property>
+        <property name="allModelIds" type="text">
+            <column name="allModel_ids">
+                <comment>所有模型id集合</comment>
+            </column>
+        </property>
+        <property name="dimensions" type="text">
+            <column name="dimensions">
+                <comment>维度信息</comment>
+            </column>
+        </property>
+        <many-to-one name="topicInfo" lazy="false" cascade="save-update,persist">
+            <column name="topic_id">
+                <comment>专题</comment>
+            </column>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

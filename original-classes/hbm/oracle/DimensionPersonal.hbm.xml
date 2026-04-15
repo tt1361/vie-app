@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.dimension">
+    <class name="DimensionPersonal" table="DIMENSION_PERSONAL">
+        <id name="dimensionId" type="long">
+            <column name="dimension_id">
+                <comment>id</comment>
+            </column>
+            <generator class="sequence">
+                <param name="sequence">
+                    DIMENSION_PERSONAL_SEQ
+                </param>
+            </generator>
+        </id>
+        <property name="dimensionName" type="string">
+            <column name="dimension_name">
+                <comment>维度名称</comment>
+            </column>
+        </property>
+        <property name="dimensionAnotherName" type="string">
+            <column name="dimension_another_name">
+                <comment>维度别名</comment>
+            </column>
+        </property>
+        <property name="dimensionType" type="string">
+            <column name="dimension_type">
+                <comment>维度类型</comment>
+            </column>
+        </property>
+        <property name="dimensionState" type="int">
+            <column name="dimension_state" not-null="true" default="0">
+                <comment>维度状态</comment>
+            </column>
+        </property>
+        <property name="createTime" type="string">
+            <column name="create_time">
+                <comment>创建时间</comment>
+            </column>
+        </property>
+        <property name="updateTime" type="string">
+            <column name="update_time">
+                <comment>更新时间</comment>
+            </column>
+        </property>
+        <property name="dataSource" type="string">
+            <column name="dataSource">
+                <comment>数据源</comment>
+            </column>
+        </property>
+        <set name="dimensionValueSet" lazy="false">
+            <key>
+                <column name="dimension_id">
+                    <comment>模型组id</comment>
+                </column>
+            </key>
+            <one-to-many class="DimensionPersonalValue"/>
+        </set>
+    </class>
+
+</hibernate-mapping>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="com.iflytek.vie.app.pojo.datamining.TogetherResult" table="callreason_together_result">
+		<id name="togetherId" type="int">
+			<column name="together_id" not-null="true"/>
+			<generator class="native"></generator>
+		</id>
+		<property name="taskId" type="long">
+			<column name="task_id"/>
+		</property>
+		<property name="togetherName" type="string">
+			<column name="together_name"/>
+		</property>
+		<property name="togetherNum" type="int">
+			<column name="together_num"/>
+		</property>
+		<property name="parentId" type="long">
+			<column name="parent_id"/>
+		</property>
+		<property name="chartLeftInfo" type="string">
+			<column name="chart_left_info"/>
+		</property>
+		<property name="chartRightInfo" type="string">
+			<column name="chart_right_info"/>
+		</property>
+		<property name="telephoneIdInfo" type="string">
+			<column name="telephone_id_info"/>
+		</property>
+		<property name="togetherCheckNum" type="int">
+			<column name="together_check_num"/>
+		</property>
+	</class>
+</hibernate-mapping>

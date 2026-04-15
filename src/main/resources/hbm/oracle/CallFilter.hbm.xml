@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.iflytek.vie.app.pojo.call">
+    <class name="CallFilter" table="CALL_FILTER">
+        <id name="id" type="int">
+            <column name="id">
+            </column>
+            <generator class="sequence">
+                <param name="sequence">call_filter_seq</param>
+            </generator>
+        </id>
+        <property name="filter" type="string">
+            <column name="filter" length="2048">
+            </column>
+        </property>
+        <property name="filterName" type="string">
+            <column name="filter_name" length="128">
+            </column>
+        </property>
+        <property name="delFlag" type="int">
+            <column name="del_flag">
+            </column>
+        </property>
+        <property name="createTime" type="java.sql.Timestamp">
+            <column name="create_time">
+            </column>
+        </property>
+        <property name="filterType" type="int">
+            <column name="filter_type">
+            </column>
+        </property>
+        <property name="userId" type="int">
+            <column name="user_id" default="0">
+            </column>
+        </property>
+        <property name="listType" type="int">
+        <column name="list_type">
+        </column>
+    </property>
+        <property name="dataSource" type="string">
+            <column name="dataSource">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>
