@@ -62,8 +62,9 @@ public class DataQueryServiceImpl implements DataQueryService {
          VoiceDataResponse voiceDataResponse = new VoiceDataResponse();
 
          try {
-            String sql = "select " + selVoiceColumn + " from " + dataSource + " where id = '" + callId + "' and processed=0 ";
             String url = DynamicEsSource.getEsSourceByType(dataSource, "mainAnydrillAddress");
+            selVoiceColumn = this.buildVoiceListSelectColumns(selVoiceColumn, url, dataSource);
+            String sql = "select " + selVoiceColumn + " from " + dataSource + " where id = '" + callId + "' and processed=0 ";
             ResultSet resultSet = this.excuteContext.executeSearchQuery(url, sql);
             if (resultSet != null && resultSet.getTotalCount() != 0L) {
                DimensionRequest request = new DimensionRequest();
@@ -107,8 +108,9 @@ public class DataQueryServiceImpl implements DataQueryService {
          VoiceDataResponse voiceDataResponse = new VoiceDataResponse();
 
          try {
-            String sql = "select " + selVoiceColumn + " from " + dataSource + " where taskId = '" + taskId + "' and processed = 0";
             String url = DynamicEsSource.getEsSourceByType(dataSource, "mainAnydrillAddress");
+            selVoiceColumn = this.buildVoiceListSelectColumns(selVoiceColumn, url, dataSource);
+            String sql = "select " + selVoiceColumn + " from " + dataSource + " where taskId = '" + taskId + "' and processed = 0";
             ResultSet resultSet = this.excuteContext.executeSearchQuery(url, sql);
             if (resultSet != null && resultSet.getTotalCount() != 0L) {
                DimensionRequest request = new DimensionRequest();
@@ -189,6 +191,19 @@ public class DataQueryServiceImpl implements DataQueryService {
       return showColumn;
    }
 
+   private String buildVoiceListSelectColumns(String selVoiceColumn, String url, String indexTableName) {
+      String[] selArray = selVoiceColumn.split(",");
+      List<String> selColum = new ArrayList<>();
+
+      for (String column : selArray) {
+         if (!StringUtils.isNullOrEmpry(column)) {
+            selColum.add(column.trim());
+         }
+      }
+
+      return this.buildOptionalListenUrlSelectColumns(selColum, url, indexTableName);
+   }
+
    public LinkedHashMap<String, Object> getAudioBaseInfo_ByVoice(DataFilter dataFilter) throws VieAppServiceException {
       LinkedHashMap<String, Object> dataMap = new LinkedHashMap<>();
       if (dataFilter == null) {
@@ -202,7 +217,7 @@ public class DataQueryServiceImpl implements DataQueryService {
             String voiceId = dataFilter.getVoiceId();
             String indexTableName = dataFilter.getDataSource();
             String url = DynamicEsSource.getEsSourceByType(dataFilter.getDataSource(), "mainAnydrillAddress");
-            String selStr = this.buildAudioBaseSelectColumns(selColum, url, indexTableName);
+            String selStr = this.buildOptionalListenUrlSelectColumns(selColum, url, indexTableName);
             if (!StringUtils.isNullOrEmpry(voiceId) && !StringUtils.isNullOrEmpry(indexTableName) && !StringUtils.isNullOrEmpry(selStr)) {
                String sql = "select " + selStr + " from " + indexTableName + " where voiceId='" + voiceId + "'";
                this.logger.info(sql);
@@ -239,7 +254,7 @@ public class DataQueryServiceImpl implements DataQueryService {
             String taskId = dataFilter.getTaskId();
             String indexTableName = dataFilter.getDataSource();
             String url = DynamicEsSource.getEsSourceByType(dataFilter.getDataSource(), "mainAnydrillAddress");
-            String selStr = this.buildAudioBaseSelectColumns(selColum, url, indexTableName);
+            String selStr = this.buildOptionalListenUrlSelectColumns(selColum, url, indexTableName);
             if (!StringUtils.isNullOrEmpry(taskId) && !StringUtils.isNullOrEmpry(indexTableName) && !StringUtils.isNullOrEmpry(selStr)) {
                String sql = "select " + selStr + " from " + indexTableName + " where taskId='" + taskId + "'";
                this.logger.info(sql);
@@ -263,7 +278,7 @@ public class DataQueryServiceImpl implements DataQueryService {
       }
    }
 
-   private String buildAudioBaseSelectColumns(List<String> selColum, String url, String indexTableName) {
+   private String buildOptionalListenUrlSelectColumns(List<String> selColum, String url, String indexTableName) {
       String selStr = "";
       boolean listenUrlChecked = false;
       boolean listenUrlExists = false;
