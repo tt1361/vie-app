@@ -32,6 +32,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.anydrill.calculate.set.ResultSet;
+import org.anydrill.ddl.model.Column;
+import org.anydrill.ddl.model.Table;
+import org.anydrill.ddl.model.TableInfoResultSet;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,21 +199,13 @@ public class DataQueryServiceImpl implements DataQueryService {
       } else if (dataFilter.getDataSource() != null && dataFilter.getDataSource().length() != 0) {
          try {
             List<String> selColum = dataFilter.getQueryList();
-            String selStr = "";
-
-            for (String str : selColum) {
-               if (!selStr.contains(str + ",")) {
-                  selStr = selStr + str + ",";
-               }
-            }
-
-            selStr = selStr.substring(0, selStr.length() - 1);
             String voiceId = dataFilter.getVoiceId();
             String indexTableName = dataFilter.getDataSource();
+            String url = DynamicEsSource.getEsSourceByType(dataFilter.getDataSource(), "mainAnydrillAddress");
+            String selStr = this.buildAudioBaseSelectColumns(selColum, url, indexTableName);
             if (!StringUtils.isNullOrEmpry(voiceId) && !StringUtils.isNullOrEmpry(indexTableName) && !StringUtils.isNullOrEmpry(selStr)) {
                String sql = "select " + selStr + " from " + indexTableName + " where voiceId='" + voiceId + "'";
                this.logger.info(sql);
-               String url = DynamicEsSource.getEsSourceByType(dataFilter.getDataSource(), "mainAnydrillAddress");
                ResultSet rs = this.excuteContext.executeSearchQuery(url, sql);
                if (rs != null && rs.getTotalCount() > 0L) {
                   dataMap = (LinkedHashMap<String, Object>)rs.toList().get(0);
@@ -241,21 +236,13 @@ public class DataQueryServiceImpl implements DataQueryService {
       } else if (dataFilter.getDataSource() != null && dataFilter.getDataSource().length() != 0) {
          try {
             List<String> selColum = dataFilter.getQueryList();
-            String selStr = "";
-
-            for (String str : selColum) {
-               if (!selStr.contains(str + ",")) {
-                  selStr = selStr + str + ",";
-               }
-            }
-
-            selStr = selStr.substring(0, selStr.length() - 1);
             String taskId = dataFilter.getTaskId();
             String indexTableName = dataFilter.getDataSource();
+            String url = DynamicEsSource.getEsSourceByType(dataFilter.getDataSource(), "mainAnydrillAddress");
+            String selStr = this.buildAudioBaseSelectColumns(selColum, url, indexTableName);
             if (!StringUtils.isNullOrEmpry(taskId) && !StringUtils.isNullOrEmpry(indexTableName) && !StringUtils.isNullOrEmpry(selStr)) {
                String sql = "select " + selStr + " from " + indexTableName + " where taskId='" + taskId + "'";
                this.logger.info(sql);
-               String url = DynamicEsSource.getEsSourceByType(dataFilter.getDataSource(), "mainAnydrillAddress");
                ResultSet rs = this.excuteContext.executeSearchQuery(url, sql);
                if (rs != null && rs.getTotalCount() > 0L) {
                   dataMap = (LinkedHashMap<String, Object>)rs.toList().get(0);
@@ -274,6 +261,74 @@ public class DataQueryServiceImpl implements DataQueryService {
          this.logger.error("DataSource不能为空");
          throw new VieAppServiceException("DataSource不能为空");
       }
+   }
+
+   private String buildAudioBaseSelectColumns(List<String> selColum, String url, String indexTableName) {
+      String selStr = "";
+      boolean listenUrlChecked = false;
+      boolean listenUrlExists = false;
+
+      for (String str : selColum) {
+         if ("listenUrl".equals(str)) {
+            if (!listenUrlChecked) {
+               listenUrlExists = this.indexFieldExists(url, indexTableName, str);
+               listenUrlChecked = true;
+            }
+
+            if (!listenUrlExists) {
+               this.logger.info("索引{}不存在listenUrl字段，跳过查询", indexTableName);
+               continue;
+            }
+         }
+
+         if (!selStr.contains(str + ",")) {
+            selStr = selStr + str + ",";
+         }
+      }
+
+      return selStr.length() == 0 ? "" : selStr.substring(0, selStr.length() - 1);
+   }
+
+   private boolean indexFieldExists(String url, String indexTableName, String fieldName) {
+      try {
+         TableInfoResultSet tableInfoResultSet = this.excuteContext.executeQueryFieldName(url, indexTableName);
+         if (tableInfoResultSet == null || tableInfoResultSet.getTolCount() == 0) {
+            return false;
+         }
+
+         List<Table> tableList = tableInfoResultSet.toList();
+         if (tableList == null) {
+            return false;
+         }
+
+         for (Table table : tableList) {
+            if (table == null) {
+               continue;
+            }
+
+            List<Column> columnList = table.getColumnList();
+            if (columnList != null) {
+               for (Column column : columnList) {
+                  if (column != null && fieldName.equals(column.getName())) {
+                     return true;
+                  }
+               }
+            }
+
+            List<String> childFieldList = table.getChildFieldList();
+            if (childFieldList != null) {
+               for (String childField : childFieldList) {
+                  if (fieldName.equals(childField)) {
+                     return true;
+                  }
+               }
+            }
+         }
+      } catch (Exception var9) {
+         this.logger.warn("查询索引{}字段{}是否存在失败，跳过该字段", indexTableName, fieldName, var9);
+      }
+
+      return false;
    }
 
    public String getSilverlightPlayText_ByVoice(DataQueryRequest queryRequest) throws VieAppServiceException {
