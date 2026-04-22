@@ -19,6 +19,7 @@ import com.iflytek.vie.app.pojo.dimension.DimensionRequest;
 import com.iflytek.vie.app.pojo.player.PlayerDataRequest;
 import com.iflytek.vie.app.pojo.player.VoiceBaseInfo;
 import com.iflytek.vie.app.provider.common.DataSourceInfo;
+import com.iflytek.vie.app.provider.common.HttpHelper;
 import com.iflytek.vie.dynamic.DynamicEsSource;
 import com.iflytek.vie.utils.ExcuteContext;
 import com.iflytek.vie.utils.RestUtil;
@@ -32,9 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.anydrill.calculate.set.ResultSet;
-import org.anydrill.ddl.model.Column;
-import org.anydrill.ddl.model.Table;
-import org.anydrill.ddl.model.TableInfoResultSet;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,8 +61,9 @@ public class DataQueryServiceImpl implements DataQueryService {
 
          try {
             String url = DynamicEsSource.getEsSourceByType(dataSource, "mainAnydrillAddress");
-            selVoiceColumn = this.buildVoiceListSelectColumns(selVoiceColumn, url, dataSource);
-            String sql = "select " + selVoiceColumn + " from " + dataSource + " where id = '" + callId + "' and processed=0 ";
+            String whereSql = "id = '" + callId + "' and processed=0 ";
+            selVoiceColumn = this.buildVoiceListSelectColumns(selVoiceColumn, dataSource);
+            String sql = "select " + selVoiceColumn + " from " + dataSource + " where " + whereSql;
             ResultSet resultSet = this.excuteContext.executeSearchQuery(url, sql);
             if (resultSet != null && resultSet.getTotalCount() != 0L) {
                DimensionRequest request = new DimensionRequest();
@@ -109,8 +108,9 @@ public class DataQueryServiceImpl implements DataQueryService {
 
          try {
             String url = DynamicEsSource.getEsSourceByType(dataSource, "mainAnydrillAddress");
-            selVoiceColumn = this.buildVoiceListSelectColumns(selVoiceColumn, url, dataSource);
-            String sql = "select " + selVoiceColumn + " from " + dataSource + " where taskId = '" + taskId + "' and processed = 0";
+            String whereSql = "taskId = '" + taskId + "' and processed = 0";
+            selVoiceColumn = this.buildVoiceListSelectColumns(selVoiceColumn, dataSource);
+            String sql = "select " + selVoiceColumn + " from " + dataSource + " where " + whereSql;
             ResultSet resultSet = this.excuteContext.executeSearchQuery(url, sql);
             if (resultSet != null && resultSet.getTotalCount() != 0L) {
                DimensionRequest request = new DimensionRequest();
@@ -191,7 +191,7 @@ public class DataQueryServiceImpl implements DataQueryService {
       return showColumn;
    }
 
-   private String buildVoiceListSelectColumns(String selVoiceColumn, String url, String indexTableName) {
+   private String buildVoiceListSelectColumns(String selVoiceColumn, String indexTableName) {
       String[] selArray = selVoiceColumn.split(",");
       List<String> selColum = new ArrayList<>();
 
@@ -201,7 +201,7 @@ public class DataQueryServiceImpl implements DataQueryService {
          }
       }
 
-      return this.buildOptionalListenUrlSelectColumns(selColum, url, indexTableName);
+      return this.buildOptionalListenUrlSelectColumns(selColum, indexTableName);
    }
 
    public LinkedHashMap<String, Object> getAudioBaseInfo_ByVoice(DataFilter dataFilter) throws VieAppServiceException {
@@ -217,9 +217,10 @@ public class DataQueryServiceImpl implements DataQueryService {
             String voiceId = dataFilter.getVoiceId();
             String indexTableName = dataFilter.getDataSource();
             String url = DynamicEsSource.getEsSourceByType(dataFilter.getDataSource(), "mainAnydrillAddress");
-            String selStr = this.buildOptionalListenUrlSelectColumns(selColum, url, indexTableName);
+            String whereSql = "voiceId='" + voiceId + "'";
+            String selStr = this.buildOptionalListenUrlSelectColumns(selColum, indexTableName);
             if (!StringUtils.isNullOrEmpry(voiceId) && !StringUtils.isNullOrEmpry(indexTableName) && !StringUtils.isNullOrEmpry(selStr)) {
-               String sql = "select " + selStr + " from " + indexTableName + " where voiceId='" + voiceId + "'";
+               String sql = "select " + selStr + " from " + indexTableName + " where " + whereSql;
                this.logger.info(sql);
                ResultSet rs = this.excuteContext.executeSearchQuery(url, sql);
                if (rs != null && rs.getTotalCount() > 0L) {
@@ -254,9 +255,10 @@ public class DataQueryServiceImpl implements DataQueryService {
             String taskId = dataFilter.getTaskId();
             String indexTableName = dataFilter.getDataSource();
             String url = DynamicEsSource.getEsSourceByType(dataFilter.getDataSource(), "mainAnydrillAddress");
-            String selStr = this.buildOptionalListenUrlSelectColumns(selColum, url, indexTableName);
+            String whereSql = "taskId='" + taskId + "'";
+            String selStr = this.buildOptionalListenUrlSelectColumns(selColum, indexTableName);
             if (!StringUtils.isNullOrEmpry(taskId) && !StringUtils.isNullOrEmpry(indexTableName) && !StringUtils.isNullOrEmpry(selStr)) {
-               String sql = "select " + selStr + " from " + indexTableName + " where taskId='" + taskId + "'";
+               String sql = "select " + selStr + " from " + indexTableName + " where " + whereSql;
                this.logger.info(sql);
                ResultSet rs = this.excuteContext.executeSearchQuery(url, sql);
                if (rs != null && rs.getTotalCount() > 0L) {
@@ -278,69 +280,98 @@ public class DataQueryServiceImpl implements DataQueryService {
       }
    }
 
-   private String buildOptionalListenUrlSelectColumns(List<String> selColum, String url, String indexTableName) {
+   private String buildOptionalListenUrlSelectColumns(List<String> selColum, String indexTableName) {
       String selStr = "";
       boolean listenUrlChecked = false;
       boolean listenUrlExists = false;
 
       for (String str : selColum) {
-         if ("listenUrl".equals(str)) {
+         String currentColumn = str == null ? "" : str.trim();
+         if ("listenUrl".equals(currentColumn)) {
             if (!listenUrlChecked) {
-               listenUrlExists = this.indexFieldExists(url, indexTableName, str);
+               listenUrlExists = this.indexFieldExists(indexTableName, currentColumn);
                listenUrlChecked = true;
             }
 
             if (!listenUrlExists) {
-               this.logger.info("索引{}不存在listenUrl字段，跳过查询", indexTableName);
+               this.logger.info("当前索引{}不存在listenUrl字段，跳过查询", indexTableName);
                continue;
             }
          }
 
-         if (!selStr.contains(str + ",")) {
-            selStr = selStr + str + ",";
+         if (!StringUtils.isNullOrEmpry(currentColumn) && !selStr.contains(currentColumn + ",")) {
+            selStr = selStr + currentColumn + ",";
          }
       }
 
       return selStr.length() == 0 ? "" : selStr.substring(0, selStr.length() - 1);
    }
 
-   private boolean indexFieldExists(String url, String indexTableName, String fieldName) {
+   private boolean indexFieldExists(String indexTableName, String fieldName) {
+      String esAddress = DynamicEsSource.getEsSourceByType(indexTableName, "mainEsAddress");
+      if (StringUtils.isNullOrEmpry(esAddress)) {
+         this.logger.warn("无法获取{}对应的mainEsAddress，跳过{}字段", indexTableName, fieldName);
+         return false;
+      }
+
+      String[] esHosts = esAddress.split("[;,]");
       try {
-         TableInfoResultSet tableInfoResultSet = this.excuteContext.executeQueryFieldName(url, indexTableName);
-         if (tableInfoResultSet == null || tableInfoResultSet.getTolCount() == 0) {
-            return false;
-         }
-
-         List<Table> tableList = tableInfoResultSet.toList();
-         if (tableList == null) {
-            return false;
-         }
-
-         for (Table table : tableList) {
-            if (table == null) {
+         for (String esHost : esHosts) {
+            String host = this.normalizeEsHost(esHost);
+            if (StringUtils.isNullOrEmpry(host)) {
                continue;
             }
 
-            List<Column> columnList = table.getColumnList();
-            if (columnList != null) {
-               for (Column column : columnList) {
-                  if (column != null && fieldName.equals(column.getName())) {
-                     return true;
-                  }
-               }
-            }
-
-            List<String> childFieldList = table.getChildFieldList();
-            if (childFieldList != null) {
-               for (String childField : childFieldList) {
-                  if (fieldName.equals(childField)) {
-                     return true;
-                  }
-               }
+            String mappingUrl = host + "/" + indexTableName + "*/_mapping";
+            HttpHelper httpHelper = new HttpHelper(3000);
+            String mapping = httpHelper.get(mappingUrl, "UTF-8");
+            if (!StringUtils.isNullOrEmpry(mapping) && this.mappingContainsField(JSON.parse(mapping), fieldName)) {
+               return true;
             }
          }
       } catch (Exception var9) {
-         this.logger.warn("查询索引{}字段{}是否存在失败，跳过该字段", indexTableName, fieldName, var9);
+         this.logger.warn("查询{}*的ES mapping判断{}字段失败，跳过该字段", indexTableName, fieldName, var9);
+      }
+
+      return false;
+   }
+
+   private String normalizeEsHost(String esHost) {
+      if (esHost == null) {
+         return "";
+      }
+
+      String host = esHost.trim();
+      if (host.endsWith("/")) {
+         host = host.substring(0, host.length() - 1);
+      }
+
+      if (!host.startsWith("http://") && !host.startsWith("https://")) {
+         host = "http://" + host;
+      }
+
+      return host;
+   }
+
+   private boolean mappingContainsField(Object mapping, String fieldName) {
+      if (mapping instanceof Map) {
+         Map map = (Map)mapping;
+         if (map.containsKey(fieldName)) {
+            return true;
+         }
+
+         for (Object value : map.values()) {
+            if (this.mappingContainsField(value, fieldName)) {
+               return true;
+            }
+         }
+      } else if (mapping instanceof List) {
+         List list = (List)mapping;
+         for (Object value : list) {
+            if (this.mappingContainsField(value, fieldName)) {
+               return true;
+            }
+         }
       }
 
       return false;
