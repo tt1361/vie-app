@@ -209,14 +209,14 @@ public class PlayerServiceImpl implements PlayerService {
          conn.setRequestMethod("GET");
          conn.setConnectTimeout(5000);
          conn.setReadTimeout(30000);
-         conn.setRequestProperty("Range", "bytes=0-4095");
+         conn.setRequestProperty("Range", "bytes=0-43");
          int status = conn.getResponseCode();
          if (status >= 400) {
             throw new ViePlatformServiceException("录音不存在");
          }
 
          inputStream = conn.getInputStream();
-         byte[] header = new byte[4096];
+         byte[] header = new byte[WAV_HEADER_LENGTH];
          int offset = 0;
 
          while(offset < header.length) {
@@ -228,12 +228,12 @@ public class PlayerServiceImpl implements PlayerService {
             offset += read;
          }
 
-         if (offset <= 0) {
+         if (offset < WAV_HEADER_LENGTH) {
             throw new ViePlatformServiceException("录音头信息不完整");
          }
 
          if (!this.isWaveHeader(header)) {
-            return this.readMp3FormatBuilder(header, offset, conn);
+            throw new ViePlatformServiceException("listenUrl不是标准WAV录音，暂不支持解析格式");
          }
 
          int datalength = this.littleEndianToInt(header[40], header[41], header[42], header[43]);
@@ -270,34 +270,6 @@ public class PlayerServiceImpl implements PlayerService {
       }
    }
 
-   private Builder readMp3FormatBuilder(byte[] header, int length, HttpURLConnection conn) throws ViePlatformServiceException {
-      int start = this.skipId3Tag(header, length);
-
-      for(int i = start; i <= length - 4; ++i) {
-         if ((header[i] & 255) == 255 && (header[i + 1] & 224) == 224) {
-            Mp3FrameInfo frameInfo = this.parseMp3Frame(header[i], header[i + 1], header[i + 2], header[i + 3]);
-            if (frameInfo != null) {
-               long audioBytes = this.resolveAudioLength(conn);
-               long durationMs = audioBytes > 0L && frameInfo.bitrate > 0 ? audioBytes * 8L * 1000L / (long)frameInfo.bitrate : 0L;
-               int sampleCount = durationMs > 0L ? (int)((long)frameInfo.sampleRate * durationMs / 1000L) : frameInfo.sampleRate;
-               int blockAlign = frameInfo.channels * 2;
-               int dataLength = sampleCount * blockAlign;
-               return new Builder()
-                  .blockAlign((short)blockAlign)
-                  .headerLength(0)
-                  .dataLength(dataLength)
-                  .waveformatEncoding(85)
-                  .sampleRate(frameInfo.sampleRate)
-                  .bitsPerSample((short)16)
-                  .channels((short)frameInfo.channels)
-                  .existHeader(false);
-            }
-         }
-      }
-
-      throw new ViePlatformServiceException("listenUrl音频格式暂不支持解析");
-   }
-
    private boolean isWaveHeader(byte[] header) {
       return header != null
          && header.length >= WAV_HEADER_LENGTH
@@ -311,102 +283,12 @@ public class PlayerServiceImpl implements PlayerService {
          && header[11] == 69;
    }
 
-   private int skipId3Tag(byte[] header, int length) {
-      if (length >= 10 && header[0] == 73 && header[1] == 68 && header[2] == 51) {
-         int size = (header[6] & 127) << 21 | (header[7] & 127) << 14 | (header[8] & 127) << 7 | header[9] & 127;
-         int start = 10 + size;
-         if (start < length) {
-            return start;
-         }
-      }
-
-      return 0;
-   }
-
    private int littleEndianToInt(byte b1, byte b2) {
       return ((b2 & 255) << 8) | (b1 & 255);
    }
 
    private int littleEndianToInt(byte b1, byte b2, byte b3, byte b4) {
       return ((b4 & 255) << 24) | ((b3 & 255) << 16) | ((b2 & 255) << 8) | (b1 & 255);
-   }
-
-   private long resolveAudioLength(HttpURLConnection conn) {
-      String contentRange = conn.getHeaderField("Content-Range");
-      if (!StringUtils.isNullOrEmpry(contentRange)) {
-         int slash = contentRange.lastIndexOf(47);
-         if (slash >= 0 && slash + 1 < contentRange.length()) {
-            try {
-               return Long.parseLong(contentRange.substring(slash + 1));
-            } catch (Exception var6) {
-               this.logger.warn("解析Content-Range失败: {}", contentRange, var6);
-            }
-         }
-      }
-
-      String contentLength = conn.getHeaderField("Content-Length");
-      if (!StringUtils.isNullOrEmpry(contentLength)) {
-         try {
-            return Long.parseLong(contentLength);
-         } catch (Exception var5) {
-            this.logger.warn("解析Content-Length失败: {}", contentLength, var5);
-         }
-      }
-
-      return 0L;
-   }
-
-   private Mp3FrameInfo parseMp3Frame(byte b1, byte b2, byte b3, byte b4) {
-      int header = (b1 & 255) << 24 | (b2 & 255) << 16 | (b3 & 255) << 8 | b4 & 255;
-      int versionBits = header >> 19 & 3;
-      int layerBits = header >> 17 & 3;
-      int bitrateIndex = header >> 12 & 15;
-      int sampleRateIndex = header >> 10 & 3;
-      int channelMode = header >> 6 & 3;
-      if (versionBits == 1 || layerBits == 0 || bitrateIndex == 0 || bitrateIndex == 15 || sampleRateIndex == 3) {
-         return null;
-      }
-
-      int version = versionBits == 3 ? 1 : (versionBits == 2 ? 2 : 25);
-      int layer = layerBits == 3 ? 1 : (layerBits == 2 ? 2 : 3);
-      int bitrate = this.getMp3Bitrate(version, layer, bitrateIndex);
-      int sampleRate = this.getMp3SampleRate(version, sampleRateIndex);
-      if (bitrate <= 0 || sampleRate <= 0) {
-         return null;
-      }
-
-      int channels = channelMode == 3 ? 1 : 2;
-      return new Mp3FrameInfo(sampleRate, channels, bitrate);
-   }
-
-   private int getMp3Bitrate(int version, int layer, int index) {
-      int[][] mpeg1 = new int[][]{{0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448}, {0, 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384}, {0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320}};
-      int[][] mpeg2 = new int[][]{{0, 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256}, {0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160}, {0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160}};
-      int layerIndex = layer - 1;
-      int kbps = version == 1 ? mpeg1[layerIndex][index] : mpeg2[layerIndex][index];
-      return kbps * 1000;
-   }
-
-   private int getMp3SampleRate(int version, int index) {
-      int[] base = new int[]{44100, 48000, 32000};
-      int sampleRate = base[index];
-      if (version == 2) {
-         return sampleRate / 2;
-      } else {
-         return version == 25 ? sampleRate / 4 : sampleRate;
-      }
-   }
-
-   private static class Mp3FrameInfo {
-      private int sampleRate;
-      private int channels;
-      private int bitrate;
-
-      Mp3FrameInfo(int sampleRate, int channels, int bitrate) {
-         this.sampleRate = sampleRate;
-         this.channels = channels;
-         this.bitrate = bitrate;
-      }
    }
 
    public String getAudioGramService(PlayerDataRequest request) throws ViePlatformServiceException {
