@@ -713,13 +713,8 @@ public class DataQueryServiceImpl implements DataQueryService {
                InitialiseWaveFormat iwf = null;
                if ("wave-format".equals(voice_format)) {
                   if (isNewRecording) {
-                     // 新录音：通过 HTTP 获取 WAV header
-                     this.logger.info("新录音获取wave-format，通过listenUrl: {}", listenUrl);
-                     RestUtil restUtil = new RestUtil();
-                     String requst = restUtil.getRequst(listenUrl);
-                     Map<String, Object> vgsData = (Map<String, Object>)mapper.readValue(requst, Map.class);
-                     WaveFormat.Builder builder = this.getWareFormatBuilder(vgsData);
-                      iwf = this.waveFormat(builder);
+                     playerDataRequest.setMacTag("__LISTEN_URL__" + listenUrl);
+                     iwf = this.playerService.getVoiceFormatService(playerDataRequest);
                      resultObj = iwf;
                   } else {
                      iwf = this.playerService.getVoiceFormatService(playerDataRequest);

@@ -28,6 +28,10 @@ import com.iflytek.vie.dynamic.DynamicEsSource;
 import com.iflytek.vie.utils.ExcuteContext;
 import com.iflytek.vie.utils.RestUtil;
 import com.iflytek.vie.utils.StringUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -152,6 +156,15 @@ public class PlayerServiceImpl implements PlayerService {
       InitialiseWaveFormat iwf = null;
       if (request != null && !StringUtils.isNullOrEmpry(request.getVoiceUrl()) && !StringUtils.isNullOrEmpry(request.getMacTag())) {
          try {
+            if ("02".equals(request.getVoiceUrl()) && request.getMacTag().startsWith("__LISTEN_URL__")) {
+               String listenUrl = request.getMacTag().substring("__LISTEN_URL__".length());
+               this.logger.info("新录音获取wave-format，通过listenUrl: {}", listenUrl);
+               Builder builder = this.readWaveFormatBuilderFromListenUrl(listenUrl);
+               iwf = this.waveFormat(builder);
+               this.logger.info("### service is ending! ###");
+               return iwf;
+            }
+
             Hashtable<String, Object> paramInfo = new Hashtable<>();
             String voiceUrl = request.getVoiceUrl();
             voiceUrl = voiceUrl.replace("|$|", "#");
@@ -183,6 +196,216 @@ public class PlayerServiceImpl implements PlayerService {
          return iwf;
       } else {
          throw new ViePlatformServiceException("请求参数不能为空");
+      }
+   }
+
+   private Builder readWaveFormatBuilderFromListenUrl(String listenUrl) throws Exception {
+      HttpURLConnection conn = null;
+      InputStream inputStream = null;
+
+      try {
+         URL url = new URL(listenUrl);
+         conn = (HttpURLConnection)url.openConnection();
+         conn.setRequestMethod("GET");
+         conn.setConnectTimeout(5000);
+         conn.setReadTimeout(30000);
+         conn.setRequestProperty("Range", "bytes=0-4095");
+         int status = conn.getResponseCode();
+         if (status >= 400) {
+            throw new ViePlatformServiceException("录音不存在");
+         }
+
+         inputStream = conn.getInputStream();
+         byte[] header = new byte[4096];
+         int offset = 0;
+
+         while(offset < header.length) {
+            int read = inputStream.read(header, offset, header.length - offset);
+            if (read == -1) {
+               break;
+            }
+
+            offset += read;
+         }
+
+         if (offset <= 0) {
+            throw new ViePlatformServiceException("录音头信息不完整");
+         }
+
+         if (!this.isWaveHeader(header)) {
+            return this.readMp3FormatBuilder(header, offset, conn);
+         }
+
+         int datalength = this.littleEndianToInt(header[40], header[41], header[42], header[43]);
+         int waveformat = this.littleEndianToInt(header[20], header[21]);
+         int samplaRate = this.littleEndianToInt(header[24], header[25], header[26], header[27]);
+         int channel = this.littleEndianToInt(header[22], header[23]);
+         int blockAlign = this.littleEndianToInt(header[32], header[33]);
+         int bitsPerSample = this.littleEndianToInt(header[34], header[35]);
+         return new Builder()
+            .blockAlign((short)blockAlign)
+            .headerLength(WAV_HEADER_LENGTH)
+            .dataLength(datalength)
+            .waveformatEncoding(waveformat)
+            .sampleRate(samplaRate)
+            .bitsPerSample((short)bitsPerSample)
+            .channels((short)channel)
+            .existHeader(true);
+      } catch (ViePlatformServiceException var18) {
+         throw var18;
+      } catch (Exception var19) {
+         throw new ViePlatformServiceException("服务内部错误", var19);
+      } finally {
+         if (inputStream != null) {
+            try {
+               inputStream.close();
+            } catch (IOException var17) {
+               this.logger.warn("关闭listenUrl音频流失败", var17);
+            }
+         }
+
+         if (conn != null) {
+            conn.disconnect();
+         }
+      }
+   }
+
+   private Builder readMp3FormatBuilder(byte[] header, int length, HttpURLConnection conn) throws ViePlatformServiceException {
+      int start = this.skipId3Tag(header, length);
+
+      for(int i = start; i <= length - 4; ++i) {
+         if ((header[i] & 255) == 255 && (header[i + 1] & 224) == 224) {
+            Mp3FrameInfo frameInfo = this.parseMp3Frame(header[i], header[i + 1], header[i + 2], header[i + 3]);
+            if (frameInfo != null) {
+               long audioBytes = this.resolveAudioLength(conn);
+               long durationMs = audioBytes > 0L && frameInfo.bitrate > 0 ? audioBytes * 8L * 1000L / (long)frameInfo.bitrate : 0L;
+               int sampleCount = durationMs > 0L ? (int)((long)frameInfo.sampleRate * durationMs / 1000L) : frameInfo.sampleRate;
+               int blockAlign = frameInfo.channels * 2;
+               int dataLength = sampleCount * blockAlign;
+               return new Builder()
+                  .blockAlign((short)blockAlign)
+                  .headerLength(0)
+                  .dataLength(dataLength)
+                  .waveformatEncoding(85)
+                  .sampleRate(frameInfo.sampleRate)
+                  .bitsPerSample((short)16)
+                  .channels((short)frameInfo.channels)
+                  .existHeader(false);
+            }
+         }
+      }
+
+      throw new ViePlatformServiceException("listenUrl音频格式暂不支持解析");
+   }
+
+   private boolean isWaveHeader(byte[] header) {
+      return header != null
+         && header.length >= WAV_HEADER_LENGTH
+         && header[0] == 82
+         && header[1] == 73
+         && header[2] == 70
+         && header[3] == 70
+         && header[8] == 87
+         && header[9] == 65
+         && header[10] == 86
+         && header[11] == 69;
+   }
+
+   private int skipId3Tag(byte[] header, int length) {
+      if (length >= 10 && header[0] == 73 && header[1] == 68 && header[2] == 51) {
+         int size = (header[6] & 127) << 21 | (header[7] & 127) << 14 | (header[8] & 127) << 7 | header[9] & 127;
+         int start = 10 + size;
+         if (start < length) {
+            return start;
+         }
+      }
+
+      return 0;
+   }
+
+   private int littleEndianToInt(byte b1, byte b2) {
+      return ((b2 & 255) << 8) | (b1 & 255);
+   }
+
+   private int littleEndianToInt(byte b1, byte b2, byte b3, byte b4) {
+      return ((b4 & 255) << 24) | ((b3 & 255) << 16) | ((b2 & 255) << 8) | (b1 & 255);
+   }
+
+   private long resolveAudioLength(HttpURLConnection conn) {
+      String contentRange = conn.getHeaderField("Content-Range");
+      if (!StringUtils.isNullOrEmpry(contentRange)) {
+         int slash = contentRange.lastIndexOf(47);
+         if (slash >= 0 && slash + 1 < contentRange.length()) {
+            try {
+               return Long.parseLong(contentRange.substring(slash + 1));
+            } catch (Exception var6) {
+               this.logger.warn("解析Content-Range失败: {}", contentRange, var6);
+            }
+         }
+      }
+
+      String contentLength = conn.getHeaderField("Content-Length");
+      if (!StringUtils.isNullOrEmpry(contentLength)) {
+         try {
+            return Long.parseLong(contentLength);
+         } catch (Exception var5) {
+            this.logger.warn("解析Content-Length失败: {}", contentLength, var5);
+         }
+      }
+
+      return 0L;
+   }
+
+   private Mp3FrameInfo parseMp3Frame(byte b1, byte b2, byte b3, byte b4) {
+      int header = (b1 & 255) << 24 | (b2 & 255) << 16 | (b3 & 255) << 8 | b4 & 255;
+      int versionBits = header >> 19 & 3;
+      int layerBits = header >> 17 & 3;
+      int bitrateIndex = header >> 12 & 15;
+      int sampleRateIndex = header >> 10 & 3;
+      int channelMode = header >> 6 & 3;
+      if (versionBits == 1 || layerBits == 0 || bitrateIndex == 0 || bitrateIndex == 15 || sampleRateIndex == 3) {
+         return null;
+      }
+
+      int version = versionBits == 3 ? 1 : (versionBits == 2 ? 2 : 25);
+      int layer = layerBits == 3 ? 1 : (layerBits == 2 ? 2 : 3);
+      int bitrate = this.getMp3Bitrate(version, layer, bitrateIndex);
+      int sampleRate = this.getMp3SampleRate(version, sampleRateIndex);
+      if (bitrate <= 0 || sampleRate <= 0) {
+         return null;
+      }
+
+      int channels = channelMode == 3 ? 1 : 2;
+      return new Mp3FrameInfo(sampleRate, channels, bitrate);
+   }
+
+   private int getMp3Bitrate(int version, int layer, int index) {
+      int[][] mpeg1 = new int[][]{{0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448}, {0, 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384}, {0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320}};
+      int[][] mpeg2 = new int[][]{{0, 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256}, {0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160}, {0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160}};
+      int layerIndex = layer - 1;
+      int kbps = version == 1 ? mpeg1[layerIndex][index] : mpeg2[layerIndex][index];
+      return kbps * 1000;
+   }
+
+   private int getMp3SampleRate(int version, int index) {
+      int[] base = new int[]{44100, 48000, 32000};
+      int sampleRate = base[index];
+      if (version == 2) {
+         return sampleRate / 2;
+      } else {
+         return version == 25 ? sampleRate / 4 : sampleRate;
+      }
+   }
+
+   private static class Mp3FrameInfo {
+      private int sampleRate;
+      private int channels;
+      private int bitrate;
+
+      Mp3FrameInfo(int sampleRate, int channels, int bitrate) {
+         this.sampleRate = sampleRate;
+         this.channels = channels;
+         this.bitrate = bitrate;
       }
    }
 
